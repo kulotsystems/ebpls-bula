@@ -194,128 +194,211 @@
 
                             // update classifications
                             $can_proceed = true;
-                            for($i=0; $i<sizeof($arr_classifications); $i++) {
-                                $business_line_id = intval($arr_classifications[$i]['business_line_id']);
-                                $application_type = mysqli_real_escape_string($con, $arr_classifications[$i]['application_type']);
-                                $fee_variable_id = intval($arr_classifications[$i]['fee_variable_id']);
-                                $amount = floatval($arr_classifications[$i]['fee_amount']);
+                            $business_line_id = intval($_POST['business_line_id']);
+                            $new_tax_status = intval($_POST['new_tax_status']);
+                            $renewal_tax_status = intval($_POST['renewal_tax_status']);
+                            $new_tax_fixed = floatval($_POST['new_tax_fixed']);
+                            $renewal_tax_fixed = floatval($_POST['renewal_tax_fixed']);
 
-                                // check if classification exists
-                                $query  = "SELECT `ID` FROM `fees_classification` ";
-                                $query .= "WHERE `ApplicationType`='$application_type' ";
-                                $query .= "AND `BusinessLineID`=$business_line_id ";
-                                $query .= "AND `FeeID`=$fee_id";
-                                $result = mysqli_query($con, $query);
-                                if(!has_no_db_error('checking if fee classification exists'))
-                                    $can_proceed = false;
+
+                            // insert or update classification
+                            $fees_classification_id = 0;
+                            $query  = "SELECT `ID` FROM `fees_classification` WHERE `BusinessLineID`=$business_line_id AND `FeeID`=$fee_id";
+                            $result = mysqli_query($con, $query);
+                            if(!has_no_db_error('for checking classification existence'))
+                                $can_proceed = false;
+                            else {
+                                if(mysqli_num_rows($result) <= 0) {
+                                    // insert
+                                    $query = "INSERT INTO `fees_classification`(`BusinessLineID`, `FeeID`, `FeeVariableID`, `NewTaxVariableID`, `RenewalTaxVariableID`) VALUES($business_line_id, $fee_id, 1, $new_tax_status, $renewal_tax_status)"; // FeeVariableID not needed
+                                    mysqli_query($con, $query);
+                                    if(!has_no_db_error('for inserting new fee classification'))
+                                        $can_proceed = false;
+                                    else
+                                        $fees_classification_id = mysqli_insert_id($con);
+                                }
                                 else {
-                                    if($fee_variable_id != 1) {
+                                    // get id
+                                    $row = mysqli_fetch_assoc($result);
+                                    $fees_classification_id = intval($row['ID']);
+                                }
+                            }
 
-                                        // fee is applicable
-                                        if (mysqli_num_rows($result) <= 0) {
-                                            $query = "INSERT INTO `fees_classification`(`ApplicationType`, `BusinessLineID`, `FeeID`, `FeeVariableID`, `Amount`) ";
-                                            $query .= "VALUES('$application_type', $business_line_id, $fee_id, $fee_variable_id, $amount)";
-                                            mysqli_query($con, $query);
-                                            if (!has_no_db_error('adding fee classification'))
-                                                $can_proceed = false;
-                                        }
-                                        else {
-                                            $row = mysqli_fetch_assoc($result);
-                                            $query = "UPDATE `fees_classification` ";
-                                            $query .= "SET `ApplicationType`='$application_type', ";
-                                            $query .= "`BusinessLineID`=$business_line_id, ";
-                                            $query .= "`FeeID`=$fee_id, ";
-                                            $query .= "`FeeVariableID`=$fee_variable_id, ";
-                                            $query .= "`Amount`=$amount ";
-                                            $query .= "WHERE `ID`=" . intval($row['ID']);
-                                            mysqli_query($con, $query);
-                                            if (!has_no_db_error('updating fee classification'))
-                                                $can_proceed = false;
-                                        }
 
-                                        // fee is per business size
-                                        if($fee_variable_id == 3) {
-                                            // fee is per business size
-                                            $business_size_fees = array();
-                                            if(isset($arr_classifications[$i]['business_size_fees'])) {
-                                                $business_size_fees = $arr_classifications[$i]['business_size_fees'];
-                                                for($j=0; $j<sizeof($business_size_fees); $j++) {
-                                                    $business_size_id = intval($business_size_fees[$j]['id']);
-                                                    $business_size_fee_amount = floatval($business_size_fees[$j]['amount']);
+                            // get previous fee brackets
+                            $arr_prev_tax_brackets = array();
+                            $query  = "SELECT `ID`, `ApplicationType` FROM `fees_classification_tax` ";
+                            $query .= "WHERE `FeesClassificationID`=$fees_classification_id";
+                            $result = mysqli_query($con, $query);
+                            if(!has_no_db_error('getting previous fee brackets'))
+                                $can_proceed = false;
+                            else {
+                                while($row = mysqli_fetch_assoc($result)) {
+                                    $prev_id = intval($row['ID']);
+                                    $application_type = $row['ApplicationType'];
+                                    $proceed_add = false;
+                                    if(($new_tax_status == 3 || $new_tax_status == 9) && $application_type == 'NEW')
+                                        $proceed_add = true;
+                                    else if(($renewal_tax_status == 4 || $renewal_tax_status == 5 || $renewal_tax_status == 6 || $renewal_tax_status == 9) && $application_type == 'RENEWAL')
+                                        $proceed_add = true;
 
-                                                    // check if business size fee exists
-                                                    $query = "SELECT `ID` FROM `business_sizes_fee` ";
-                                                    $query .= "WHERE `ApplicationType`='$application_type' ";
-                                                    $query .= "AND `BusinessSizeID`=$business_size_id ";
-                                                    $query .= "AND `BusinessLineID`=$business_line_id ";
-                                                    $query .= "AND `FeeID`=$fee_id ";
-                                                    $query .= "ORDER BY `CreatedAt` DESC";
-                                                    $result2 = mysqli_query($con, $query);
-                                                    if (!has_no_db_error('checking if business size fee exists')) {
-                                                        $can_proceed = false;
-                                                        break;
-                                                    }
-                                                    else {
-                                                        if(mysqli_num_rows($result2) > 0) {
-                                                            // business size fee exists
-                                                            $row2 = mysqli_fetch_assoc($result2);
-                                                            $business_size_fee_id = intval($row2['ID']);
-
-                                                            $query  = "UPDATE `business_sizes_fee` ";
-                                                            $query .= "SET `Amount`=$business_size_fee_amount ";
-                                                            $query .= "WHERE `ID`=$business_size_fee_id";
-                                                            mysqli_query($con, $query);
-                                                            if (!has_no_db_error('updating business size fee')) {
-                                                                $can_proceed = false;
-                                                                break;
-                                                            }
-                                                        }
-                                                        else {
-                                                            // business size fee does not exist
-                                                            $query  = "INSERT INTO `business_sizes_fee`(`ApplicationType`, `BusinessSizeID`, `BusinessLineID`, `FeeID`, `Amount`) ";
-                                                            $query .= "VALUES('$application_type', $business_size_id, $business_line_id, $fee_id, $business_size_fee_amount)";
-                                                            mysqli_query($con, $query);
-                                                            if (!has_no_db_error('adding business size fee')) {
-                                                                $can_proceed = false;
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else {
-
-                                        // fee is not applicable
-                                        if(mysqli_num_rows($result) > 0) {
-                                            $row = mysqli_fetch_assoc($result);
-                                            $query  = "DELETE FROM `fees_classification` ";
-                                            $query .= "WHERE `ID`=" . intval($row['ID']);
-                                            mysqli_query($con, $query);
-                                            if(!has_no_db_error('removing fee classification'))
-                                                $can_proceed = false;
-                                        }
-
+                                    if($proceed_add) {
+                                        array_push($arr_prev_tax_brackets, array(
+                                            'id' => $prev_id,
+                                            'application_type' => $application_type
+                                        ));
                                     }
                                 }
                             }
 
                             if($can_proceed) {
-                                // get update date
-                                $query = "SELECT DATE_FORMAT(`UpdatedAt`, '%M %e, %Y &middot; %h:%i %p') AS UpdatedAt FROM `fees` WHERE `ID`=$fee_id";
-                                $result = mysqli_query($con, $query);
-                                while ($row = mysqli_fetch_assoc($result)) {
-                                    $response['success']['data'] = $row['UpdatedAt'];
-                                    break;
+                                // keep track of submitted prev fee brackets
+                                $arr_current_tax_brackets = array();
+
+                                // gather new id of submitted new fee brackets
+                                $arr_new_tax_brackets_id_new = array();
+                                $arr_new_tax_brackets_id_renewal = array();
+
+                                // save new fee brackets
+                                if ($new_tax_status == 3 || $new_tax_status == 9) {
+                                    $new_tax_brackets = array();
+                                    if (isset($_POST['new_tax_brackets'])) {
+                                        $new_tax_brackets = $_POST['new_tax_brackets'];
+                                    }
+
+                                    for($i=0; $i<sizeof($new_tax_brackets); $i++) {
+                                        $tax_bracket = $new_tax_brackets[$i];
+                                        $order = intval($tax_bracket['order']);
+                                        $id = intval($tax_bracket['id']);
+                                        $asset_min = floatval($tax_bracket['asset_min']);
+                                        $asset_max = floatval($tax_bracket['asset_max']);
+                                        $tax_value = floatval($tax_bracket['tax_value']);
+                                        $is_by_percentage = intval($tax_bracket['is_by_percentage']);
+                                        $percentage = floatval($tax_bracket['percentage']);
+                                        $of_tax_variable_id = intval($tax_bracket['of_tax_variable']);
+                                        $in_excess_of = floatval($tax_bracket['in_excess_of']);
+                                        $additional_tax = floatval($tax_bracket['additional_tax']);
+
+                                        if($id == -1) { // insert
+                                            $query  = "INSERT INTO `fees_classification_tax`(`ApplicationType`, `FeesClassificationID`, `AssetMinimum`, `AssetMaximum`, `Amount`, `IsByPercentage`, `Percentage`, `OfTaxVariableID`, `InExcessOf`, `AdditionalAmount`) ";
+                                            $query .= "VALUES('NEW', $fees_classification_id, $asset_min, $asset_max, $tax_value, $is_by_percentage, $percentage, $of_tax_variable_id, $in_excess_of, $additional_tax)";
+                                            mysqli_query($con, $query);
+                                            if(!has_no_db_error('adding fee bracket for new business')) {
+                                                $can_proceed = false;
+                                            }
+                                            array_push($arr_new_tax_brackets_id_new, array(
+                                                'order' => $order,
+                                                'new_id' => mysqli_insert_id($con)
+                                            ));
+
+                                        }
+                                        else { // update
+                                            $query  = "UPDATE `fees_classification_tax` ";
+                                            $query .= "SET `AssetMinimum`=$asset_min, ";
+                                            $query .= "`AssetMaximum`=$asset_max, ";
+                                            $query .= "`Amount`=$tax_value, ";
+                                            $query .= "`IsByPercentage`=$is_by_percentage, ";
+                                            $query .= "`Percentage`=$percentage, ";
+                                            $query .= "`OfTaxVariableID`=$of_tax_variable_id, ";
+                                            $query .= "`InExcessOf`=$in_excess_of, ";
+                                            $query .= "`AdditionalAmount`=$additional_tax ";
+                                            $query .= "WHERE `ID`=$id";
+                                            mysqli_query($con, $query);
+                                            if(!has_no_db_error('updating tax bracket for new business')) {
+                                                $can_proceed = false;
+                                            }
+                                            array_push($arr_current_tax_brackets, array(
+                                                'id' => $id,
+                                                'application_type' => 'NEW'
+                                            ));
+                                        }
+                                    }
                                 }
 
-                                // append to system log (UPDATE)
-                                append_to_system_log(array(
-                                    'action' => 'UPDATE',
-                                    'item' => $item,
-                                    'item_data' => get_fee_data($fee_id)
-                                ));
+                                if($can_proceed) {
+                                    // save renewal fee brackets
+                                    if ($renewal_tax_status == 4 || $renewal_tax_status == 5 || $renewal_tax_status == 6 || $renewal_tax_status == 9) {
+                                        $renewal_tax_brackets = array();
+                                        if (isset($_POST['renewal_tax_brackets'])) {
+                                            $renewal_tax_brackets = $_POST['renewal_tax_brackets'];
+                                        }
+
+                                        for ($i = 0; $i < sizeof($renewal_tax_brackets); $i++) {
+                                            $tax_bracket = $renewal_tax_brackets[$i];
+                                            $order = intval($tax_bracket['order']);
+                                            $id = intval($tax_bracket['id']);
+                                            $asset_min = floatval($tax_bracket['asset_min']);
+                                            $asset_max = floatval($tax_bracket['asset_max']);
+                                            $tax_value = floatval($tax_bracket['tax_value']);
+                                            $is_by_percentage = intval($tax_bracket['is_by_percentage']);
+                                            $percentage = floatval($tax_bracket['percentage']);
+                                            $of_tax_variable_id = intval($tax_bracket['of_tax_variable']);
+                                            $in_excess_of = floatval($tax_bracket['in_excess_of']);
+                                            $additional_tax = floatval($tax_bracket['additional_tax']);
+
+                                            if ($id == -1) { // insert
+                                                $query = "INSERT INTO `fees_classification_tax`(`ApplicationType`, `FeesClassificationID`, `AssetMinimum`, `AssetMaximum`, `Amount`, `IsByPercentage`, `Percentage`, `OfTaxVariableID`, `InExcessOf`, `AdditionalAmount`) ";
+                                                $query .= "VALUES('RENEWAL', $fees_classification_id, $asset_min, $asset_max, $tax_value, $is_by_percentage, $percentage, $of_tax_variable_id, $in_excess_of, $additional_tax)";
+                                                mysqli_query($con, $query);
+                                                if (!has_no_db_error('adding fee bracket for renewal')) {
+                                                    $can_proceed = false;
+                                                }
+                                                array_push($arr_new_tax_brackets_id_renewal, array(
+                                                    'order' => $order,
+                                                    'new_id' => mysqli_insert_id($con)
+                                                ));
+
+                                            } else { // update
+                                                $query = "UPDATE `fees_classification_tax` ";
+                                                $query .= "SET `AssetMinimum`=$asset_min, ";
+                                                $query .= "`AssetMaximum`=$asset_max, ";
+                                                $query .= "`Amount`=$tax_value, ";
+                                                $query .= "`IsByPercentage`=$is_by_percentage, ";
+                                                $query .= "`Percentage`=$percentage, ";
+                                                $query .= "`OfTaxVariableID`=$of_tax_variable_id, ";
+                                                $query .= "`InExcessOf`=$in_excess_of, ";
+                                                $query .= "`AdditionalAmount`=$additional_tax ";
+                                                $query .= "WHERE `ID`=$id";
+                                                mysqli_query($con, $query);
+                                                if (!has_no_db_error('updating tax bracket for renewal')) {
+                                                    $can_proceed = false;
+                                                }
+                                                array_push($arr_current_tax_brackets, array(
+                                                    'id' => $id,
+                                                    'application_type' => 'RENEWAL'
+                                                ));
+                                            }
+                                        }
+                                    }
+
+                                    // save fee classification data
+                                    if($can_proceed) {
+                                        $query = "UPDATE `fees_classification` ";
+                                        $query .= "SET ";
+                                        $query .= "`NewTaxVariableID`=$new_tax_status, ";
+                                        $query .= "`RenewalTaxVariableID`=$renewal_tax_status, ";
+                                        $query .= "`NewTaxFixed`=$new_tax_fixed, ";
+                                        $query .= "`RenewalTaxFixed`=$renewal_tax_fixed ";
+                                        $query .= "WHERE `ID`=$fees_classification_id";
+                                        mysqli_query($con, $query);
+                                        if (has_no_db_error('saving fee classification')) {
+                                            // get update date
+                                            $query = "SELECT DATE_FORMAT(`UpdatedAt`, '%M %e, %Y &middot; %h:%i %p') AS UpdatedAt FROM `fees` WHERE `ID`=$fee_id";
+                                            $result = mysqli_query($con, $query);
+                                            while ($row = mysqli_fetch_assoc($result)) {
+                                                $response['success']['data'] = $row['UpdatedAt'];
+                                                break;
+                                            }
+
+                                            // append to system log (UPDATE)
+                                            append_to_system_log(array(
+                                                'action' => 'UPDATE',
+                                                'item' => $item,
+                                                'item_data' => get_fee_data($fee_id)
+                                            ));
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

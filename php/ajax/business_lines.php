@@ -430,6 +430,81 @@
                 }
             }
         }
+
+        // GET FEE SETTINGS
+        else if(isset($_POST['get_fee_settings_for'])) {
+
+
+            $business_line_id = intval($_POST['get_fee_settings_for']);
+            $fee_id = intval($_POST['fee_id']);
+
+            // get fee classification
+            $res = [];
+            $GLOBALS['query']  = "SELECT `ID`, `ApplicationType`, `BusinessLineID`, `FeeVariableID`, `Amount`, `NewTaxVariableID`, `RenewalTaxVariableID`, `NewTaxFixed`, `RenewalTaxFixed` ";
+            $GLOBALS['query'] .= "FROM `fees_classification` ";
+            $GLOBALS['query'] .= "WHERE `FeeID`=$fee_id AND `BusinessLineID`=$business_line_id ";
+            $GLOBALS['query'] .= "ORDER BY `ApplicationType`";
+
+            $resultz2 = mysqli_query($GLOBALS['con'], $GLOBALS['query']);
+            if (has_no_db_error('getting fee classifications')) {
+                while ($rowz2 = mysqli_fetch_assoc($resultz2)) {
+                    $business_line_id = intval($rowz2['BusinessLineID']);
+                    $fees_classif_id  = intval($rowz2['ID']);
+
+                    // get tax brackets
+                    $arr_taxes_brackets = array();
+                    $GLOBALS['query']  = "SELECT `ID`, `ApplicationType`, `AssetMinimum`, `AssetMaximum`, `Amount`, `IsByPercentage`, `Percentage`, `OfTaxVariableID`, `InExcessOf`, `AdditionalAmount` ";
+                    $GLOBALS['query'] .= "FROM `fees_classification_tax` ";
+                    $GLOBALS['query'] .= "WHERE `FeesClassificationID`=$fees_classif_id ";
+                    $GLOBALS['query'] .= "ORDER BY `ApplicationType`, `AssetMinimum`";
+                    $resultz3 = mysqli_query($GLOBALS['con'], $GLOBALS['query']);
+                    if (has_no_db_error('getting tax brackets in fees classification')) {
+                        while ($rowz3 = mysqli_fetch_assoc($resultz3)) {
+                            array_push($arr_taxes_brackets, array(
+                                'id' => intval($rowz3['ID']),
+                                'application_type' => $rowz3['ApplicationType'],
+                                'asset_minimum' => floatval($rowz3['AssetMinimum']),
+                                'asset_maximum' => floatval($rowz3['AssetMaximum']),
+                                'tax_amount' => floatval($rowz3['Amount']),
+                                'is_by_percentage' => intval($rowz3['IsByPercentage']),
+                                'percentage' => floatval($rowz3['Percentage']),
+                                'of_tax_variable_id' => intval($rowz3['OfTaxVariableID']),
+                                'in_excess_of' => floatval($rowz3['InExcessOf']),
+                                'additional_amount' => floatval($rowz3['AdditionalAmount'])
+                            ));
+                        }
+                    }
+                    else {
+                        require INDEX . 'php/ajax/__fin.php';
+                        exit();
+                    }
+
+
+                    $res = [
+                        'business_line_id' => $business_line_id,
+                        'application_type' => $rowz2['ApplicationType'],
+                        'fee_variable_id' => intval($rowz2['FeeVariableID']),
+
+                        'amount' => $rowz2['Amount'],
+                        'new_tax_var_id' => intval($rowz2['NewTaxVariableID']),
+                        'renewal_tax_var_id' => intval($rowz2['RenewalTaxVariableID']),
+                        'new_tax_fixed' => floatval($rowz2['NewTaxFixed']),
+                        'renewal_tax_fixed' => floatval($rowz2['RenewalTaxFixed']),
+                        'tax_brackets' => $arr_taxes_brackets,
+                    ];
+                }
+
+                require INDEX . 'php/inc/TAX_VARIABLE.php';
+                $res['tax_variables'] = get_all_tax_variables('for getting fee settings');
+
+                $response['success']['data'] = $res;
+
+            }
+            else {
+                require INDEX . 'php/ajax/__fin.php';
+                exit();
+            }
+        }
     }
     require '__fin.php';
 

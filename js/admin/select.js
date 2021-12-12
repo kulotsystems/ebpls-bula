@@ -784,14 +784,6 @@ function renderItemData(objData, tabIdentifier, isForLogs, senderTabIdentifier) 
                                 o.h += "</div>";
                             o.h += "</div>";
                         }
-
-                        // extra last row (for consistent border-bottom)
-                        /*o.h += "<div class='row clearfix'>";
-                            o.h += "<div class='col-md-12'>";
-                                o.h += "<div class='form-group form-group-default no-padding'></div>";
-                            o.h += "</div>";
-                        o.h += "</div>";*/
-
                     o.h += "</div>";
                 o.h += "</div>";
 
@@ -893,14 +885,6 @@ function renderItemData(objData, tabIdentifier, isForLogs, senderTabIdentifier) 
                                 o.h += "</div>";
                             o.h += "</div>";
                         }
-
-                        // extra last row (for consistent border-bottom)
-                        /*o.h += "<div class='row clearfix'>";
-                            o.h += "<div class='col-md-12'>";
-                                o.h += "<div class='form-group form-group-default no-padding'></div>";
-                            o.h += "</div>";
-                        o.h += "</div>";*/
-
                     o.h += "</div>";
                 o.h += "</div>";
             o.h += "</div>";
@@ -1317,412 +1301,26 @@ function renderItemData(objData, tabIdentifier, isForLogs, senderTabIdentifier) 
                         o.h += "</div>";
                     o.h += "</div>";
                 }
-				o.h += "</div>";
-            o.h += "</div>";
-            
-            if(objData.classifications != undefined && objData.lines_of_business != undefined && objData.business_sizes != undefined) {
-                o.h += "<br>";
-                o.h += "<p class='text-montserrat text-bold no-margin'>APPLY TO FOLLOWING LINES OF BUSINESS:</p>";
-                var arrLinesOfBusiness = objData.lines_of_business;
-                var totalLinesOfBusiness = arrLinesOfBusiness.length;
-                var arrBusinessSizes = objData.business_sizes;
-                var totalBusinessSizes = arrBusinessSizes.length;
-                var arrFeeVariables = objData.fee_variables;
-                var totalFeeVariables = arrFeeVariables.length;
-                var arrClassifications = objData.classifications;
-                var totalClassifications = arrClassifications.length;
-
-                var arrNewFeeStatus = [];
-                var arrRenewalFeeStatus = [];
-                var arrNewFeeAmount = [];
-                var arrRenewalFeeAmount = [];
-
-                for(var i=-1; i<totalLinesOfBusiness; i++) {
-                    var lineOfBusinessID = '';
-                    var lineOfBusinessTitle = '';
-                    var strN = '';
-
-                    var newFeeStatus = '';
-                    var renewalFeeStatus = '';
-                    var newAmount = '';
-                    var renewalAmount = '';
-                    var newArrBusSizesFees = [];
-                    var renewalArrBusiSizesFees = [];
-
-                    var cboNewToggleAttr = "";
-                    var cboRenewalToggleAttr = "";
-
-                    var txtNewToggleAttr = "";
-                    var txtRenewalToggleAttr = "";
-
-                    var formGroupClass = '';
-                    var formGroupAttachedClass = '';
-                    var labelBoldClass = '';
-                    var applyLock = false;
-                    attrDisabled = '';
-
-                    var isNewFound = false;
-                    var isRenewalFound = false;
-
-                    if(i == -1) {
-                        lineOfBusinessTitle = "ALL LINES OF BUSINESS";
-                        formGroupClass = ' form-group-outline-success';
-                        labelBoldClass = ' text-bold';
-
-                        cboNewToggleAttr = " data-toggle-all-cbo='.cbo-fee-status-new'";
-                        cboRenewalToggleAttr = " data-toggle-all-cbo='.cbo-fee-status-renewal'";
-
-                        txtNewToggleAttr = " data-toggle-all-txt='.txt-amount-new'";
-                        txtRenewalToggleAttr = " data-toggle-all-txt='.txt-amount-renewal'";
-                        applyLock = true;
-                    }
-                    else {
-                        lineOfBusinessID = arrLinesOfBusiness[i].id;
-                        lineOfBusinessTitle = arrLinesOfBusiness[i].title;
-                        strN = (i+1).toString() + '. ';
-                        formGroupAttachedClass = ' form-group-attached-hover';
-
-                        cboNewToggleAttr = " data-toggle-one-cbo='.cbo-fee-status-new'";
-                        cboRenewalToggleAttr = " data-toggle-one-cbo='.cbo-fee-status-renewal'";
-
-                        txtNewToggleAttr = " data-toggle-one-txt='.txt-amount-new'";
-                        txtRenewalToggleAttr = " data-toggle-one-txt='.txt-amount-renewal'";
-
-                        // search for the fee status
-                        newFeeStatus = '1';
-                        renewalFeeStatus = '1';
-                        for(var j=0; j<totalClassifications; j++) {
-                            if(arrClassifications[j].business_line_id == lineOfBusinessID) {
-                                if(arrClassifications[j].application_type == 'NEW') {
-                                    newFeeStatus = arrClassifications[j].fee_variable_id;
-                                    newAmount = arrClassifications[j].amount;
-                                    newArrBusSizesFees = arrClassifications[j].business_size_fees;
-                                    if(arrNewFeeStatus.indexOf(newFeeStatus) < 0)
-                                        arrNewFeeStatus.push(newFeeStatus);
-                                    if(arrNewFeeAmount.indexOf(newAmount) < 0)
-                                        arrNewFeeAmount.push(newAmount);
-                                    isNewFound = true;
-                                }
-                                if(arrClassifications[j].application_type == 'RENEWAL') {
-                                    renewalFeeStatus = arrClassifications[j].fee_variable_id;
-                                    renewalAmount = arrClassifications[j].amount;
-                                    renewalArrBusiSizesFees = arrClassifications[j].business_size_fees;
-                                    if(arrRenewalFeeStatus.indexOf(renewalFeeStatus) < 0)
-                                        arrRenewalFeeStatus.push(renewalFeeStatus);
-                                    if(arrRenewalFeeAmount.indexOf(renewalAmount) < 0)
-                                        arrRenewalFeeAmount.push(renewalAmount);
-                                    isRenewalFound = true;
-                                }
+                if(objData.lines_of_business != undefined) {
+                    o.h += "<div class='col-md-12'>";
+                        o.h += "<div class='form-group form-group-default'>";
+                            o.h += "<label>LINE OF BUSINESS</label>";
+                            o.h += "<select id='cbo-fee-settings'>";
+                            o.h += "<option></option>";
+                            for(var i=0; i<objData.lines_of_business.length; i++) {
+                                o.h += "<option value='" + objData.lines_of_business[i].id + "'" + attrSelected + ">" + objData.lines_of_business[i].title +"</option>";
                             }
-                        }
-                    }
-
-
-                    o.h += "<div class='form-group-attached no-margin" + formGroupAttachedClass + "' style='margin-bottom: 5px !important;' data-id='" + lineOfBusinessID + "'>";
-                        o.h += "<div class='row clearfix'>";
-                            o.h += "<div class='col-md-5 col-sm-12 col-12'>";
-                                if(!applyLock) {
-                                    o.h += "<div class='form-group form-group-default" + formGroupClass + "'>";
-                                        o.h += "<label class='" + labelBoldClass + "'>LINE OF BUSINESS</label>";
-                                        //o.h += "<input type='text' class='form-control txt-line-of-business txt-line-of-business-" + i.toString() + "' readonly disabled>";
-                                        o.h += "<span class='form-control text-bold padding-top-8 txt-line-of-business txt-line-of-business-" + i.toString() + "'>" + (i + 1).toString() + ". " + lineOfBusinessTitle + "</span>";
-                                    o.h += "</div>";
-                                }
-                                else {
-                                    o.h += "<div class='form-group form-group-default input-group'>";
-                                        o.h += "<div class='form-input-group'>";
-                                            o.h += "<label class='inline'>LINE OF BUSINESS</label>";
-                                            //o.h += "<input type='text' class='form-control txt-line-of-business txt-line-of-business-" + i.toString() + "' readonly disabled>";
-                                            o.h += "<span class='form-control text-bold padding-top-8 txt-line-of-business txt-line-of-business-" + i.toString() + "'>" + lineOfBusinessTitle + "</span>";
-                                        o.h += "</div>";
-                                        o.h += "<div class='input-group-addon bg-transparent h-c-50'>";
-                                            o.h += "<button class='btn btn-primary btn-default btn-xs btn-lock-div' data-target='.div-lockable--1'><span class='fa fa-lock'></span></button>";
-                                        o.h += "</div>";
-                                    o.h += "</div>";
-                                }
-                                //o.v.push(['.txt-line-of-business-' + i.toString(), strN + lineOfBusinessTitle]);
-                            o.h += "</div>";
-
-                            if(i == -1 || isForLogs) {
-                                attrDisabled = 'disabled readonly';
-                            }
-                            o.h += "<div class='col-md-7 col-sm-12 col-12 no-padding'>";
-
-                                o.h += "<div class='row clearfix no-margin'>";
-                                    o.h += "<div class='col-md-6 col-sm-6 col-6 div-lockable-" + i.toString() + "'>";
-                                        o.h += "<div class='row clearfix'>";
-
-                                            // (NEW) .cbo-fee-status
-                                            o.h += "<div class='form-group form-group-default" + formGroupClass + "'>";
-                                                o.h += "<label class='" + labelBoldClass + "'><span class='collapse-768'>FOR&nbsp;</span>NEW BUSINESS</label>";
-                                                var selectColorClass = "";
-                                                var optHTML = "";
-                                                for(var j=0; j<totalFeeVariables; j++) {
-                                                	var optColorClass = 'text-info';
-                                                    if(j==0)
-                                                        optColorClass = 'text-danger';
-                                                    else if(j == 1)
-                                                        optColorClass = 'text-success';
-                                                    else if(j == 2)
-                                                        optColorClass = 'text-primary';
-
-                                                    var attrSelected = ""
-                                                	if(newFeeStatus == arrFeeVariables[j].id) {
-                                                		attrSelected = " selected";
-                                                		if(selectColorClass == "") {
-                                                			selectColorClass = " " + optColorClass;
-                                                		}
-                                                	}
-                                                    optHTML += "<option value='" + arrFeeVariables[j].id + "'" + attrSelected + " data-color='" + optColorClass + "'>" + arrFeeVariables[j].title + "</option>";
-                                                }
-                                                o.h += "<select class='cbo-fee-status cbo-fee-status-new cbo-color" + selectColorClass + "'" + cboNewToggleAttr + " " + attrDisabled + ">";
-		                                            if(i < 0) {
-		                                                o.h += "<option value='' data-color='text-info'></option>";
-		                                            }
-		                                            o.h += optHTML;
-                                                o.h += "</select>";
-                                            o.h += "</div>";
-
-                                            // (NEW) decide to hide .form-group-fee-amount and .form-group-business-size-fee-amount
-                                            var newAmountHidden = '';
-                                            var newBusinessSizeHidden = '';
-                                            if(newFeeStatus == '' || newFeeStatus == '1') {
-                                                newAmountHidden = ' hidden';
-                                                newBusinessSizeHidden = ' hidden';
-                                            }
-                                            else if(newFeeStatus == '3') {
-                                                newAmountHidden = ' hidden';
-                                                newBusinessSizeHidden = '';
-                                            }
-                                            else {
-                                                newAmountHidden = '';
-                                                newBusinessSizeHidden = ' hidden';
-                                            }
-
-                                            // (NEW) .txt-amount
-                                            o.h += "<div class='form-group form-group-default input-group input-group-currency form-group-fee-amount" + formGroupClass + newAmountHidden + "'>";
-                                                o.h += "<div class='form-input-group'>";
-                                                    o.h += "<label class='" + labelBoldClass + "'>AMOUNT</label>";
-                                                    o.h += "<input type='text' class='form-control txt-amount txt-amount-new txt-amount-new-" + (i+1).toString() + "'" + txtNewToggleAttr + " " + attrDisabled + " value='" + applyCommas(newAmount) + "'>";
-                                                o.h += "</div>";
-                                                o.h += "<div class='input-group-addon bg-transparent h-c-50'><table class='h-100 w-100'><tr><td valign='bottom'><span class=''>&#8369;</span></td></tr></table></div>";
-                                            o.h += "</div>";
-
-                                            // (NEW) business sizes
-                                            for(var j=0; j<totalBusinessSizes; j++) {
-
-                                                // get amount of this business size fee
-                                                var businessSizeFeeAmount = 0;
-                                                for(var k=0; k<newArrBusSizesFees.length; k++) {
-                                                    if(newArrBusSizesFees[k].business_size_id == arrBusinessSizes[j].id) {
-                                                        businessSizeFeeAmount = newArrBusSizesFees[k].amount;
-                                                        break;
-                                                    }
-                                                 }
-                                                o.h += "<div class='form-group form-group-default input-group input-group-currency form-group-business-size-fee-amount form-group-business-size-fee-amount-new" + formGroupClass + newBusinessSizeHidden + "' data-id='" + arrBusinessSizes[j].id + "'>";
-                                                    o.h += "<div class='form-input-group'>";
-                                                        o.h += "<label class='" + labelBoldClass + " text-primary'>";
-                                                            var assetLimitFrom = removeCommas(arrBusinessSizes[j].asset_limit_from);
-                                                            var assetLimitTo = removeCommas(arrBusinessSizes[j].asset_limit_to);
-                                                            var totalWorkersFrom = removeCommas(arrBusinessSizes[j].total_workers_from, true);
-                                                            var totalWorkersTo = removeCommas(arrBusinessSizes[j].total_workers_to, true);
-                                                            var assetLimitStr = "ASSET LIMIT is from " + applyCommas(assetLimitFrom);
-                                                            var totalWorkersStr = "TOTAL WORKERS is from " + applyCommas(totalWorkersFrom, true);
-                                                            if(assetLimitTo != -1)
-                                                                assetLimitStr += " to " + applyCommas(assetLimitTo);
-                                                            else
-                                                                assetLimitStr += " and ABOVE ";
-
-                                                            if(totalWorkersTo != -1)
-                                                                totalWorkersStr += " to " + applyCommas(totalWorkersTo, true);
-                                                            else
-                                                                totalWorkersStr += " and ABOVE ";
-
-                                                            o.h += "<span data-toggle='tooltip' data-placement='right' data-original-title='" + assetLimitStr + " AND " + totalWorkersStr + "'>";
-                                                                o.h += "<span class='fa fa-question-circle text-primary'></span>";
-                                                            o.h += "</span>";
-                                                            o.h += " " + arrBusinessSizes[j].title;
-                                                        o.h += "</label>";
-                                                        var txtClass0 = 'txt-amount-new-business-size-fee';
-                                                        var txtClass1 = txtClass0 + '-' +  (j+1).toString();
-                                                        var txtClass2 = txtClass1 + '-' + (i+1).toString();
-                                                        var txtNewBusinessSizeToggleAttr = (i < 0) ? " data-toggle-all-txt='." + txtClass1 + "'" : " data-toggle-one-txt='." + txtClass1 + "'";
-                                                        o.h += "<input type='text' class='form-control txt-amount " + txtClass0 + " " + txtClass1 + " " + txtClass2 + "'" + txtNewBusinessSizeToggleAttr + " " + attrDisabled + " value='" + applyCommas(businessSizeFeeAmount) + "'>";
-                                                    o.h += "</div>";
-                                                    o.h += "<div class='input-group-addon bg-transparent h-c-50'><table class='h-100 w-100'><tr><td valign='bottom'><span class=''>&#8369;</span></td></tr></table></div>";
-                                                o.h += "</div>";
-                                            }
-
-                                        o.h += "</div>";
-                                    o.h += "</div>";
-                                    o.h += "<div class='col-md-6 col-sm-6 col-6 div-lockable-" + i + "'>";
-                                        o.h += "<div class='row clearfix'>";
-
-                                            // (RENEWAL) .cbo-fee-status
-                                            o.h += "<div class='form-group form-group-default" + formGroupClass + "'>";
-                                                o.h += "<label class='" + labelBoldClass + "'><span class='collapse-768'>FOR&nbsp;</span>RENEWAL</label>";
-                                                var selectColorClass = "";
-                                                var optHTML = "";
-                                                for(var j=0; j<totalFeeVariables; j++) {
-                                                	var optColorClass = 'text-info';
-                                                    if(j==0)
-                                                        optColorClass = 'text-danger';
-                                                    else if(j == 1)
-                                                        optColorClass = 'text-success';
-                                                    else if(j == 2)
-                                                        optColorClass = 'text-primary';
-
-                                                    var attrSelected = ""
-                                                	if(renewalFeeStatus == arrFeeVariables[j].id) {
-                                                		attrSelected = " selected";
-                                                		if(selectColorClass == "") {
-                                                			selectColorClass = " " + optColorClass;
-                                                		}
-                                                	}
-                                                    optHTML += "<option value='" + arrFeeVariables[j].id + "'" + attrSelected + " data-color='" + optColorClass + "'>" + arrFeeVariables[j].title + "</option>";
-                                                }
-                                                o.h += "<select class='cbo-fee-status cbo-fee-status-renewal cbo-color" + selectColorClass + "'" + cboRenewalToggleAttr + " " + attrDisabled + ">";
-                                                    if(i < 0) {
-                                                        o.h += "<option value='' data-color='text-info'></option>";
-                                                    }
-                                                    o.h += optHTML;
-                                                o.h += "</select>";
-                                            o.h += "</div>";
-
-                                            // (NEW) decide to hide .form-group-fee-amount and .form-group-business-size-fee-amount
-                                            var renewalAmountHidden = '';
-                                            var renewalBusinessSizeHidden = '';
-                                            if(renewalFeeStatus == '' || renewalFeeStatus == '1') {
-                                                renewalAmountHidden = ' hidden';
-                                                renewalBusinessSizeHidden = ' hidden';
-                                            }
-                                            else if(renewalFeeStatus == '3') {
-                                                renewalAmountHidden = ' hidden';
-                                                renewalBusinessSizeHidden = '';
-                                            }
-                                            else {
-                                                renewalAmountHidden = '';
-                                                renewalBusinessSizeHidden = ' hidden';
-                                            }
-
-                                            // (RENEWAL) .txt-amount
-                                            o.h += "<div class='form-group form-group-default input-group input-group-currency form-group-fee-amount" + formGroupClass + renewalAmountHidden + "'>";
-                                                o.h += "<div class='form-input-group'>";
-                                                    o.h += "<label class='" + labelBoldClass + "'>AMOUNT</label>";
-                                                    o.h += "<input type='text' class='form-control txt-amount txt-amount-renewal txt-amount-renewal-" + (i+1).toString() + "'" + txtRenewalToggleAttr + " " + attrDisabled +  " value='" + applyCommas(renewalAmount) + "'>";
-                                                o.h += "</div>";
-                                                o.h += "<div class='input-group-addon bg-transparent h-c-50'><table class='h-100 w-100'><tr><td valign='bottom'><span class=''>&#8369;</span></td></tr></table></div>";
-                                            o.h += "</div>";
-
-                                            // (RENEWAL) business sizes
-                                            for(var j=0; j<totalBusinessSizes; j++) {
-
-                                                // get amount of this business size fee
-                                                var businessSizeFeeAmount = 0;
-                                                for(var k=0; k<renewalArrBusiSizesFees.length; k++) {
-                                                    if(renewalArrBusiSizesFees[k].business_size_id == arrBusinessSizes[j].id) {
-                                                        businessSizeFeeAmount = renewalArrBusiSizesFees[k].amount;
-                                                        break;
-                                                    }
-                                                }
-
-                                                o.h += "<div class='form-group form-group-default input-group input-group-currency form-group-business-size-fee-amount form-group-business-size-fee-amount-renewal" + formGroupClass + renewalBusinessSizeHidden + "' data-id='" + arrBusinessSizes[j].id + "'>";
-                                                    o.h += "<div class='form-input-group'>";
-                                                        o.h += "<label class='" + labelBoldClass + " text-primary'>";
-                                                            var assetLimitFrom = removeCommas(arrBusinessSizes[j].asset_limit_from);
-                                                            var assetLimitTo = removeCommas(arrBusinessSizes[j].asset_limit_to);
-                                                            var totalWorkersFrom = removeCommas(arrBusinessSizes[j].total_workers_from, true);
-                                                            var totalWorkersTo = removeCommas(arrBusinessSizes[j].total_workers_to, true);
-                                                            var assetLimitStr = "ASSET LIMIT is from " + applyCommas(assetLimitFrom);
-                                                            var totalWorkersStr = "TOTAL WORKERS is from " + applyCommas(totalWorkersFrom, true);
-                                                            if(assetLimitTo != -1)
-                                                                assetLimitStr += " to " + applyCommas(assetLimitTo);
-                                                            else
-                                                                assetLimitStr += " and ABOVE ";
-
-                                                            if(totalWorkersTo != -1)
-                                                                totalWorkersStr += " to " + applyCommas(totalWorkersTo, true);
-                                                            else
-                                                                totalWorkersStr += " and ABOVE ";
-
-                                                            o.h += "<span data-toggle='tooltip' data-placement='left' data-original-title='" + assetLimitStr + " AND " + totalWorkersStr + "'>";
-                                                                o.h += "<span class='fa fa-question-circle text-primary'></span>";
-                                                            o.h += "</span>";
-                                                            o.h += " " + arrBusinessSizes[j].title;
-                                                        o.h += "</label>";
-                                                        var txtClass0 = 'txt-amount-renewal-business-size-fee';
-                                                        var txtClass1 = txtClass0 + '-' + (j+1).toString();
-                                                        var txtClass2 = txtClass1 + '-' + (i+1).toString();
-                                                        var txtRenewalBusinessSizeToggleAttr = (i < 0) ? " data-toggle-all-txt='." + txtClass1 + "'" : " data-toggle-one-txt='." + txtClass1 + "'";
-                                                        o.h += "<input type='text' class='form-control txt-amount " + txtClass0 + " " + txtClass1 + " " + txtClass2 + "'" + txtRenewalBusinessSizeToggleAttr + " " + attrDisabled + " value='" + applyCommas(businessSizeFeeAmount) + "'>";
-                                                    o.h += "</div>";
-                                                    o.h += "<div class='input-group-addon bg-transparent h-c-50'><table class='h-100 w-100'><tr><td valign='bottom'><span class=''>&#8369;</span></td></tr></table></div>";
-                                                o.h += "</div>";
-                                            }
-                                        o.h += "</div>";
-                                    o.h += "</div>";
-                                o.h += "</div>";
-                            o.h += "</div>";
+                            o.h += "</select>";
                         o.h += "</div>";
                     o.h += "</div>";
-
-
-                    if(!isNewFound && i > -1) {
-                        if(arrNewFeeStatus.indexOf('1') < 0)
-                            arrNewFeeStatus.push('1');
-                        if(arrNewFeeAmount.indexOf('0') < 0)
-                            arrNewFeeAmount.push('0');
-                    }
-                    if(!isRenewalFound && i > -1) {
-                        if(arrRenewalFeeStatus.indexOf('1') < 0)
-                            arrRenewalFeeStatus.push('1');
-                        if(arrRenewalFeeAmount.indexOf('0') < 0)
-                            arrRenewalFeeAmount.push('0');
-                    }
                 }
+				o.h += "</div>";
+            o.h += "</div>";
 
-                o.f = function() {
-                	// process the appearance of the first fee status element group
-                    var divContentTab = body.find('.content-tab-pane#tab' + tab);
-                    var divContent = divContentTab.find('.item-content');
-                    var cboFeeStatusNew0 = divContent.find('.cbo-fee-status-new[data-toggle-all-cbo]');
-                    var cboFeeStatusRenewal0 = divContent.find('.cbo-fee-status-renewal[data-toggle-all-cbo]');
-                    var txtAmountNew0 = divContent.find('.txt-amount-new-0');
-                    var txtAmountRenewal0 = divContent.find('.txt-amount-renewal-0');
 
-                    if(arrNewFeeStatus.length == 1) {
-                        cboFeeStatusNew0.val(arrNewFeeStatus[0]);
-                        cboFeeStatusNew0.addClass(cboFeeStatusNew0.find('option:selected').attr('data-color'));
+            // GENERATE HTML HERE
+            o.h += "<div id='generated-fees-settings'></div>";
 
-						if(cboFeeStatusNew0.val() == '3') {
-							cboFeeStatusNew0.parent().parent().find('.form-group-business-size-fee-amount').each(function(i) {
-								$(this).removeClass('hidden');
-							});
-						}
-                        else if(cboFeeStatusNew0.val() != '' && cboFeeStatusNew0.val() != '1')
-                        	txtAmountNew0.parent().parent().removeClass('hidden');
-                    }
-                    if(arrRenewalFeeStatus.length == 1) {
-                        cboFeeStatusRenewal0.val(arrRenewalFeeStatus[0]);
-                        cboFeeStatusRenewal0.addClass(cboFeeStatusRenewal0.find('option:selected').attr('data-color'));
-						if(cboFeeStatusRenewal0.val() == '3') {
-							cboFeeStatusRenewal0.parent().parent().find('.form-group-business-size-fee-amount').each(function(i) {
-								$(this).removeClass('hidden');
-							});
-						}
-                        else if(cboFeeStatusRenewal0.val() != '' && cboFeeStatusRenewal0.val() != '1')
-                        	txtAmountRenewal0.parent().parent().removeClass('hidden');
-                    }
-
-                    if(arrNewFeeAmount.length == 1) {
-                        txtAmountNew0.val(applyCommas(arrNewFeeAmount[0]));
-                        
-                    }
-                    if(arrRenewalFeeAmount.length == 1) {
-                        txtAmountRenewal0.val(applyCommas(arrRenewalFeeAmount[0]));
-                    }
-                };
-            }
         o.h += "</div>";
     }
 
@@ -3391,6 +2989,223 @@ function renderItemData(objData, tabIdentifier, isForLogs, senderTabIdentifier) 
 }
 
 
+function generateBusinessFeeSettings(objData) {
+    var o = {h: '', v:[]};
+    var attrDisabled = '';
+    var isForLogs = false;
+    o.h += "<br>";
+    o.h += "<div class='row'>";
+        o.h += "<div class='col-md-6 padding-bottom-15'>";
+            o.h += "<p class='text-montserrat text-bold'>FEE FOR NEW BUSINESS:</p>";
+            o.h += "<div class='form-group-attached div-tax-brackets-new'>";
+
+                // (NEW) .cbo-tax-status
+                o.h += "<div class='row clearfix'>";
+                var taxVariablesNew = [];
+                if(objData.tax_variables != undefined) {
+                    o.h += "<div class='col-md-12'>";
+                        o.h += "<div class='form-group form-group-default' style='border-bottom: 1px solid #ececec'>";
+                            o.h += "<label>NEW BUSINESS FEE STATUS</label>";
+                            o.h += "<select class='cbo-tax-status cbo-color'" + attrDisabled + ">";
+                            for(var i=0; i<objData.tax_variables.length; i++) {
+                                var taxVariable = objData.tax_variables[i];
+                                if(taxVariable.for_new == '1') {
+                                    var attrSelected = (objData.new_tax_var_id == taxVariable.id) ? ' selected' : '';
+                                    var classColor = 'text-info';
+                                    if(taxVariable.id == '1')
+                                        classColor = 'text-danger';
+                                    else if(taxVariable.id == '2')
+                                        classColor = 'text-success';
+                                    else if(taxVariable.id == '3')
+                                        classColor = 'text-primary';
+                                    o.h += "<option value='" + taxVariable.id + "' data-color='" + classColor + "'" + attrSelected + ">" + taxVariable.formula +"</option>";
+                                    if(taxVariable.id != '1' && taxVariable.id != '2') {
+                                        taxVariablesNew.push(taxVariable);
+                                    }
+                                }
+                            }
+                            o.h += "</select>";
+                        o.h += "</div>";
+                    o.h += "</div>";
+                }
+                o.h += "</div>";
+
+                // (NEW) decide to hide .div-amount-fixed-new, div-asset-brackets, and .btn-new-bracket
+                var newTaxAmountHidden = ' hidden';
+                var newTaxBracketHidden = ' hidden';
+                if(objData.new_tax_var_id == '2') {
+                    newTaxAmountHidden = '';
+                    newTaxBracketHidden = ' hidden';
+                }
+                else if(objData.new_tax_var_id == '3' || objData.new_tax_var_id == '9') {
+                    newTaxAmountHidden = ' hidden';
+                    newTaxBracketHidden = '';
+                }
+
+                // (NEW) .txt-amount
+                o.h += "<div class='row clearfix div-amount-fixed div-amount-fixed-new" + newTaxAmountHidden + "'>";
+                    o.h += "<div class='col-md-12'>";
+                        o.h += "<div class='form-group form-group-default input-group input-group-currency' style='border-bottom: 1px solid #ececec'>";
+                            o.h += "<div class='form-input-group'>";
+                                o.h += "<label class=''>FEE AMOUNT</label>";
+                                o.h += "<input type='text' class='form-control txt-amount txt-amount-fixed-new'" + attrDisabled + ">";
+                                o.v.push(['.txt-amount-fixed-new', applyCommas(objData.new_tax_fixed)]);
+                            o.h += "</div>";
+                            o.h += "<div class='input-group-addon bg-transparent h-c-50'><table class='h-100 w-100'><tr><td valign='bottom'><span class=''>&#8369;</span></td></tr></table></div>";
+                        o.h += "</div>";
+                    o.h += "</div>";
+                o.h += "</div>";
+
+
+                // (NEW) tax bracket
+                o.h += "<div class='row clearfix div-asset-brackets" + newTaxBracketHidden + "' data-application-type='NEW BUSINESS'>";
+                if(objData.tax_brackets) {
+                    for(var i=0; i<objData.tax_brackets.length; i++) {
+                        var taxBracket = objData.tax_brackets[i];
+                        if(taxBracket.application_type == 'NEW') {
+                            var asset_bracket = {};
+                            pushNode(asset_bracket, 'bracketID', taxBracket.id);
+                            pushNode(asset_bracket, 'assetMinimum', taxBracket.asset_minimum);
+                            pushNode(asset_bracket, 'assetMaximum', taxBracket.asset_maximum);
+                            pushNode(asset_bracket, 'taxAmount', taxBracket.tax_amount);
+                            pushNode(asset_bracket, 'isByPercentage', taxBracket.is_by_percentage);
+                            pushNode(asset_bracket, 'percentage', taxBracket.percentage);
+                            pushNode(asset_bracket, 'perTaxVariableID', objData.new_tax_var_id);
+                            pushNode(asset_bracket, 'ofTaxVariableID', taxBracket.of_tax_variable_id);
+                            pushNode(asset_bracket, 'inExcessOf', taxBracket.in_excess_of);
+                            pushNode(asset_bracket, 'additionalAmount', taxBracket.additional_amount);
+                            pushNode(asset_bracket, 'objTaxVariables', taxVariablesNew);
+                            o.h += generateAssetBracket(asset_bracket, isForLogs);
+                        }
+                    }
+                }
+                o.h += "</div>";
+
+                // (NEW) add bracket
+                if(!isForLogs) {
+                    o.h += "<div class='row clearfix div-add-bracket" + newTaxBracketHidden + "'>";
+                        o.h += "<div class='col-md-12 form-group-attached-hover'>";
+                            o.h += "<div class='form-group form-group-default input-group'>";
+                                o.h += "<div class='form-input-group'></div>";
+                                o.h += "<div class='input-group-addon bg-transparent h-c-50'>";
+                                    if(!isForLogs)
+                                        o.h += "<button class='btn btn-success btn-xs btn-new-bracket'><span class='fa fa-plus'></span></button>";
+                                o.h += "</div>";
+                            o.h += "</div>";
+                        o.h += "</div>";
+                    o.h += "</div>";
+                }
+            o.h += "</div>";
+        o.h += "</div>";
+
+        o.h += "<div class='col-md-6 padding-bottom-15'>";
+            o.h += "<p class='text-montserrat text-bold'>FEE FOR RENEWAL:</p>";
+            o.h += "<div class='form-group-attached div-tax-brackets-renewal'>";
+
+                // (RENEWAL) .cbo-tax-status
+                o.h += "<div class='row clearfix'>";
+                var taxVariablesRenewal = [];
+                if(objData.tax_variables != undefined) {
+                    o.h += "<div class='col-md-12'>";
+                        o.h += "<div class='form-group form-group-default' style='border-bottom: 1px solid #ececec'>";
+                            o.h += "<label>RENEWAL FEE STATUS</label>";
+                            o.h += "<select class='cbo-tax-status cbo-color'" + attrDisabled + ">";
+                            for(var i=0; i<objData.tax_variables.length; i++) {
+                                var taxVariable = objData.tax_variables[i];
+                                if(taxVariable.for_renewal == '1') {
+                                    var attrSelected = (objData.renewal_tax_var_id == taxVariable.id) ? ' selected' : '';
+                                    var classColor = 'text-info';
+                                    if(taxVariable.id == '1')
+                                        classColor = 'text-danger';
+                                    else if(taxVariable.id == '2')
+                                        classColor = 'text-success';
+                                    else if(taxVariable.id == '4' || taxVariable.id == '5' || taxVariable.id == '6')
+                                        classColor = 'text-primary';
+                                    o.h += "<option value='" + taxVariable.id + "' data-color='" + classColor + "'" + attrSelected + ">" + taxVariable.formula +"</option>";
+                                    if(taxVariable.id != '1' && taxVariable.id != '2') {
+                                        taxVariablesRenewal.push(taxVariable);
+                                    }
+                                }
+                            }
+                            o.h += "</select>";
+                        o.h += "</div>";
+                    o.h += "</div>";
+                }
+                o.h += "</div>";
+
+                // (RENEWAL) decide to hide .div-amount-fixed-new, div-asset-brackets, and .btn-new-bracket
+                var renewalTaxAmountHidden = ' hidden';
+                var renewalTaxBracketHidden = ' hidden';
+                if(objData.renewal_tax_var_id == '2') {
+                    renewalTaxAmountHidden = '';
+                    renewalTaxBracketHidden = ' hidden';
+                }
+                else if(objData.renewal_tax_var_id == '4' || objData.renewal_tax_var_id == '5' || objData.renewal_tax_var_id == '6' || objData.renewal_tax_var_id == '9') {
+                    renewalTaxAmountHidden = ' hidden';
+                    renewalTaxBracketHidden = '';
+                }
+
+                // (RENEWAL) .txt-amount
+                o.h += "<div class='row clearfix div-amount-fixed div-amount-fixed-renewal" + renewalTaxAmountHidden + "'>";
+                    o.h += "<div class='col-md-12'>";
+                        o.h += "<div class='form-group form-group-default input-group input-group-currency' style='border-bottom: 1px solid #ececec'>";
+                            o.h += "<div class='form-input-group'>";
+                                o.h += "<label class=''>FEE AMOUNT</label>";
+                                o.h += "<input type='text' class='form-control txt-amount txt-amount-fixed-renewal'" + attrDisabled + ">";
+                                o.v.push(['.txt-amount-fixed-renewal', applyCommas(objData.renewal_tax_fixed)]);
+                            o.h += "</div>";
+                            o.h += "<div class='input-group-addon bg-transparent h-c-50'><table class='h-100 w-100'><tr><td valign='bottom'><span class=''>&#8369;</span></td></tr></table></div>";
+                        o.h += "</div>";
+                    o.h += "</div>";
+                o.h += "</div>";
+
+                // (RENEWAL) per gross sales
+                o.h += "<div class='row clearfix div-asset-brackets" + renewalTaxBracketHidden + "' data-application-type='RENEWAL'>";
+                if(objData.tax_brackets) {
+                    for(var i=0; i<objData.tax_brackets.length; i++) {
+                        var taxBracket = objData.tax_brackets[i];
+
+                        if(taxBracket.application_type == 'RENEWAL') {
+                            var asset_bracket = {};
+                            pushNode(asset_bracket, 'bracketID', taxBracket.id);
+                            pushNode(asset_bracket, 'assetMinimum', taxBracket.asset_minimum);
+                            pushNode(asset_bracket, 'assetMaximum', taxBracket.asset_maximum);
+                            pushNode(asset_bracket, 'taxAmount', taxBracket.tax_amount);
+                            pushNode(asset_bracket, 'isByPercentage', taxBracket.is_by_percentage);
+                            pushNode(asset_bracket, 'percentage', taxBracket.percentage);
+                            pushNode(asset_bracket, 'perTaxVariableID', objData.renewal_tax_var_id);
+                            pushNode(asset_bracket, 'ofTaxVariableID', taxBracket.of_tax_variable_id);
+                            pushNode(asset_bracket, 'inExcessOf', taxBracket.in_excess_of);
+                            pushNode(asset_bracket, 'additionalAmount', taxBracket.additional_amount);
+                            pushNode(asset_bracket, 'objTaxVariables', taxVariablesRenewal);
+                            o.h += generateAssetBracket(asset_bracket, isForLogs);
+                        }
+                    }
+                }
+                o.h += "</div>";
+
+                // (RENEWAL) add bracket
+                if(!isForLogs) {
+                    o.h += "<div class='row clearfix div-add-bracket" + renewalTaxBracketHidden + "'>";
+                        o.h += "<div class='col-md-12 form-group-attached-hover'>";
+                            o.h += "<div class='form-group form-group-default input-group'>";
+                                o.h += "<div class='form-input-group'></div>";
+                                o.h += "<div class='input-group-addon bg-transparent h-c-50'>";
+                                    if(!isForLogs)
+                                        o.h += "<button class='btn btn-success btn-xs btn-new-bracket'><span class='fa fa-plus'></span></button>";
+                                o.h += "</div>";
+                            o.h += "</div>";
+                        o.h += "</div>";
+                    o.h += "</div>";
+                }
+            o.h += "</div>";
+        o.h += "</div>";
+    o.h += "</div>";
+    return o;
+}
+
+
+
 /**
  * GENERATE BUSINESS ACTIVITY
  * Generate the html to be written on $('.div-bus-activities')
@@ -3605,7 +3420,7 @@ function generateAssetBracket(asset_bracket, isForLogs) {
                             h += "<div class='col-md-6 col-sm-6 no-padding-left-colsm6 div-by-amount div-by-amount-" + assetBracketCtr.toString() + classHidden + "'>";
                                 h += "<div class='form-group form-group-default input-group input-group-currency input-group-currency-lock'>";
                                     h += "<div class='form-input-group'>";
-                                        h += "<label class=''><span class='label-label'>TAX AMOUNT</span></label>";
+                                        h += "<label class=''><span class='label-label'>FEE AMOUNT</span></label>";
                                         h += "<input type='text' class='form-control txt-amount txt-amount-tax-value' value='" + applyCommas(removeCommas(asset_bracket.taxAmount)) + "'>";
                                     h += "</div>";
                                     h += "<div class='input-group-addon bg-transparent h-c-50''><table class='h-100 w-100'><tr><td valign='bottom'><span class=''>&#8369;</span></td></tr></table></div>";
@@ -3649,7 +3464,7 @@ function generateAssetBracket(asset_bracket, isForLogs) {
                             h += "<div class='col-md-6 col-sm-6 no-padding-left-colsm6 div-additional-amount div-additional-amount-" + assetBracketCtr.toString() + classHidden + "'>";
                                 h += "<div class='form-group form-group-default input-group input-group-currency input-group-currency-lock'>";
                                     h += "<div class='form-input-group'>";
-                                        h += "<label class=''><span class='label-label'>ADDITIONAL TAX:</span></label>";
+                                        h += "<label class=''><span class='label-label'>ADDITIONAL FEE:</span></label>";
                                         h += "<input type='text' class='form-control txt-amount txt-additional-tax-amount' value='" + applyCommas(removeCommas(asset_bracket.additionalAmount)) + "'>";
                                     h += "</div>";
                                     h += "<div class='input-group-addon bg-transparent h-c-50''><table class='h-100 w-100'><tr><td valign='bottom'><span class=''>&#8369;</span></td></tr></table></div>";

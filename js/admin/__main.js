@@ -5,6 +5,49 @@
 
 $(function() {
 
+
+    $('body').delegate('#cbo-fee-settings', 'change', function() {
+        var cbo = $(this);
+        var business_line_id = parseInt(cbo.val());
+
+        Pace.restart();
+        $.ajax({
+            type: 'POST',
+            url: index + 'php/ajax/business_lines.php',
+            data: {
+                get_fee_settings_for: business_line_id,
+                fee_id: body.find('.content-tab-pane#tab' + tab).find('.card-main-item.active').attr('data-id')
+            },
+            success: function(data) {
+                var response = JSON.parse(data);
+                if(response.error != '') {
+                    showMessageDialog(response.error, '', function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    if(response.success.message != '')
+                        showMessageDialog(response.success.message, response.success.sub_message);
+                    else {
+                        var o = generateBusinessFeeSettings(response.success.data);
+                        var divGenerated = body.find('#generated-fees-settings');
+                        divGenerated.html(o.h);
+                        for(var i=0; i<o.v.length; i++) {
+                            divGenerated.find(o.v[i][0]).val(o.v[i][1]);
+                        }
+                    }
+                }
+                Pace.stop();
+            },
+            error: function(data) {
+                alert("UNABLE TO GET FEE SETTINGS\n\nError " + data.status + " (" + data.statusText + ")");
+                Pace.stop();
+            }
+        });
+    });
+
+
+
     // GET THE ACTIVE TAB
     activeSidebarMenuItem = body.find(".sidebar-menu-item.active");
 
