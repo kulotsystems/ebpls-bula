@@ -1,12 +1,13 @@
 egov-ebpls-bula { } native-php-js
 ---
-<p>
-    Electronic Business Permit and Licensing System for the <b>Municipality of Bula, Camarines Sur</b>.<br>
-    <small><i>Built using native PHP and Javascript.</i></small>
-</p>
+<p>Electronic Business Permit and Licensing System for the <b>Municipality of Bula, Camarines Sur</b>.<br></p>
 
-Installation
---
+<br>
+<h2>Tech Stack</h2>
+<a href="https://pages.revox.io/dashboard/" target="_blank">REVOX Pages Template</a> on top of native <code>PHP</code> and <code>JavaScript</code>.
+
+<br>
+<h2>Dev Setup</h2>
 <ol>
     <li>
         Download and install <a href="https://www.apachefriends.org/download.html" target="_blank">XAMPP Version 7.4</a>.
@@ -33,8 +34,8 @@ Installation
     </li>
 </ol>
 
-Usage
---
+<br>
+<h2>Test</h2>
 <ol>
     <li>
         Open <a href="http://localhost/ebpls-bula" target="_blank">http://localhost/ebpls-bula</a> in your web browser.
