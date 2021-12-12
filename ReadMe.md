@@ -4,7 +4,7 @@ egov-ebpls-bula { } native-php-js
 
 <br>
 <h2>Tech Stack</h2>
-<a href="https://pages.revox.io/dashboard/" target="_blank">REVOX Pages Template</a> on top of native <code>PHP</code> and <code>JavaScript</code>.
+<a href="https://pages.revox.io/dashboard/" target="_blank">REVOX Pages Template</a> on top of native <code>PHP</code> and <code>JavaScript with jQuery</code>.
 
 <br>
 <br>
