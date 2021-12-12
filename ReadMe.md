@@ -1,4 +1,4 @@
-egov-ebpls-bula { } native-php
+egov-ebpls-bula { } native-php-js
 ---
 <p>
     Electronic Business Permit and Licensing System for the <b>Municipality of Bula, Camarines Sur</b>.<br>
