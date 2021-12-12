@@ -1,0 +1,320 @@
+/**
+ * eGov-animate
+ * Animate the eGov logo during page load.
+ * Copyright 2020 | frozencloud (theshareideas.com) JONGA!
+ *
+ */
+
+#animation-container {
+    position: fixed;
+    top: 50%;
+    right: 50%;
+    width: 100%;
+    height: 100%;
+    background: white;
+    transform: translate(50%, -50%);
+}
+
+#sprites-container {
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    max-width: 650px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    border-radius: 1rem;
+    z-index: 5;
+    transition: 0.1s ease;
+    transform: translate(50%, -50%);
+}
+
+#sprites-container > #egov-logo {
+    backface-visibility: hidden;
+    margin-right: 13px;
+    width: 100px;
+    min-width: 100px;
+    display: flex;
+    transition: 2s all linear;
+}
+
+#sprites-container #egov-label {
+    font-size: 20px;
+    width: 0;
+    display: flex;
+    align-items: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#egov-svg {
+    width: 100%;
+    height: 100%;
+}
+
+#egov-svg * {
+    opacity: 0;
+}
+
+#egov-svg > #gear-half-cover {
+    opacity: 1 !important;
+}
+
+#egov-svg > #gear-circle-cover {
+    opacity: 1 !important;
+}
+
+/*** MODE: ANIMATE ***********************************/
+#egov-svg.animate > #citizen-head {
+    animation: show 1s linear 0s;
+    animation-fill-mode: forwards;
+}
+
+#egov-svg.animate > #citizen-body {
+    animation: show 1s linear 0s;
+    animation-fill-mode: forwards;
+}
+
+#egov-svg.animate > #wifi-1-left-white,
+#egov-svg.animate > #wifi-1-right-white {
+    opacity: 1;
+    animation:  wifi-white-1 0.5s linear 1s;
+    animation-fill-mode: forwards;
+}
+
+#egov-svg.animate > #wifi-1-left-blue,
+#egov-svg.animate > #wifi-1-right-blue {
+    animation: show 0.5s linear 1s;
+    animation-fill-mode: forwards;
+}
+
+#egov-svg.animate > #wifi-2-left-white,
+#egov-svg.animate > #wifi-2-right-white {
+    opacity: 1;
+    animation:  wifi-white-2 0.5s linear 1.2s;
+    animation-fill-mode: forwards;
+}
+
+#egov-svg.animate > #wifi-2-left-blue,
+#egov-svg.animate > #wifi-2-right-blue {
+    animation: show 0.5s linear 1.2s;
+    animation-fill-mode: forwards;
+}
+
+#egov-svg.animate > #wifi-3-left-white,
+#egov-svg.animate > #wifi-3-right-white {
+    opacity: 1;
+    animation:  wifi-white-3 0.5s linear 1.4s;
+    animation-fill-mode: forwards;
+}
+
+#egov-svg.animate > #wifi-3-left-blue,
+#egov-svg.animate > #wifi-3-right-blue {
+    animation: show 0.5s linear 1.4s;
+    animation-fill-mode: forwards;
+}
+
+#egov-svg.animate > #roof {
+    animation: show 1s ease 1.3s;
+    animation-fill-mode: forwards;
+}
+
+#egov-svg.animate > #gear {
+    animation: show 1s ease 1.5s, temp_rotate 1s ease 1.8s, rotate 3s ease infinite 2.5s alternate;
+    animation-fill-mode: forwards;
+    transform-origin: center;
+    transform-box: fill-box;
+}
+
+#animation-container.animate {
+    animation: container-snap 0.4s ease 1 6s forwards, container-exit 0.6s ease 1 6.5s forwards;
+}
+
+#sprites-container.animate{
+    animation: sprites-enter 0.2s ease 1 6s forwards, sprites-scale 0s ease 1 6.8s forwards;
+}
+
+#sprites-container.animate > #egov-label {
+    animation: dev_label 1s ease 2.5s 1 forwards;
+}
+
+/*** MODE: STATIC ************************************/
+#egov-svg.static * {
+    opacity: 1;
+}
+
+#egov-svg.static > #wifi-1-left-white,
+#egov-svg.static > #wifi-1-right-white,
+#egov-svg.static > #wifi-2-left-white,
+#egov-svg.static > #wifi-2-right-white,
+#egov-svg.static > #wifi-3-left-white,
+#egov-svg.static > #wifi-3-right-white {
+    opacity: 0;
+}
+
+#egov-svg.static > #gear {
+    animation: temp_rotate 1s ease 0s, rotate 3s ease infinite 0s alternate;
+    animation-fill-mode: forwards;
+    transform-origin: center;
+    transform-box: fill-box;
+}
+
+#animation-container.static {
+    padding: 1rem;
+    width: 200px;
+    height: 39px;
+    border-radius: 0;
+    background: transparent;
+}
+
+#sprites-container.static {
+    display: none;
+    background: white;
+    padding: 1rem;
+    top: -30px;
+    right: -115px;
+    opacity: 1;
+    transform: scale(0.53);
+}
+
+#sprites-container.static > #egov-label {
+    animation: dev_label 0.1s ease 0s 1 forwards;
+}
+
+
+/*** FADE IN *****************************************/
+@keyframes show {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/*** WHITE WIFI BAR 1 SLIDE UP ***********************/
+@keyframes wifi-white-1 {
+    from {
+        height: 106px;
+    }
+    to {
+        height: 0;
+    }
+}
+
+/*** WHITE WIFI BAR 2 SLIDE UP ***********************/
+@keyframes wifi-white-2 {
+    from {
+        height: 180px;
+    }
+    to {
+        height: 0;
+    }
+}
+
+/*** WHITE WIFI BAR 3 SLIDE UP ***********************/
+@keyframes wifi-white-3 {
+    from {
+        height: 277px;
+    }
+    to {
+        height: 0;
+    }
+}
+
+/*** GEAR MOMENTUM GAIN ******************************/
+@keyframes temp_rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-25deg);
+    }
+}
+
+/*** GEAR ROTATE ************************************/
+@keyframes rotate {
+    from {
+        transform: rotate(-25deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/*** DEVELOPER LABEL *********************************/
+@keyframes dev_label {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+/*** ANIMATION CONTAINER SNAP ************************/
+@keyframes container-snap {
+    to {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+    }
+}
+
+/*** ANIMATION CONTAINER EXIT ************************/
+@keyframes container-exit{
+    to {
+        width: 200px;
+        height: 39px;
+        border-radius: 0;
+        background: transparent;
+    }
+}
+
+/*** SPRITE CONTAINER ENTER **************************/
+@keyframes sprites-enter{
+    from {
+        background: none;
+    }
+    to {
+        opacity: 0;
+        background: white;
+        padding: 1rem;
+    }
+}
+
+/*** SPRITE CONTAINER SCALE **************************/
+@keyframes sprites-scale{
+    0% {
+        transform: scale(0.53);
+        background: white;
+        padding: 1rem;
+        top: -30px;
+        right: -115px;
+    }
+
+    100% {
+        transform: scale(0.53);
+        background: white;
+        padding: 1rem;
+        top: -30px;
+        right: -115px;
+        opacity: 1;
+    }
+}
+
+/*** ZOOM IN *****************************************/
+.zoom-in {
+    animation: zoom-in 0.6s ease 1 0s forwards;
+}
+@keyframes zoom-in {
+    from{
+        transform : scale(0.35);
+    }
+    to{
+        transform : scale(1);
+    }
+}
+
+

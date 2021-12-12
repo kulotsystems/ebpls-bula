@@ -1,0 +1,7 @@
+#doc-header, #doc-footer {
+    display: block !important;
+}
+
+.doc-show-only-on-print {
+    display: block !important;
+}
