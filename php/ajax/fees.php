@@ -382,20 +382,45 @@
                                         $query .= "WHERE `ID`=$fees_classification_id";
                                         mysqli_query($con, $query);
                                         if (has_no_db_error('saving fee classification')) {
-                                            // get update date
-                                            $query = "SELECT DATE_FORMAT(`UpdatedAt`, '%M %e, %Y &middot; %h:%i %p') AS UpdatedAt FROM `fees` WHERE `ID`=$fee_id";
-                                            $result = mysqli_query($con, $query);
-                                            while ($row = mysqli_fetch_assoc($result)) {
-                                                $response['success']['data'] = $row['UpdatedAt'];
-                                                break;
-                                            }
+                                            for ($i = 0; $i < sizeof($arr_prev_tax_brackets); $i++) {
+                                                $prev_id = $arr_prev_tax_brackets[$i]['id'];
+                                                $application_type = $arr_prev_tax_brackets[$i]['application_type'];
 
-                                            // append to system log (UPDATE)
-                                            append_to_system_log(array(
-                                                'action' => 'UPDATE',
-                                                'item' => $item,
-                                                'item_data' => get_fee_data($fee_id)
-                                            ));
+                                                $is_found = false;
+                                                for ($j = 0; $j < sizeof($arr_current_tax_brackets); $j++) {
+                                                    if($application_type == $arr_current_tax_brackets[$j]['application_type']) {
+                                                        if ($prev_id == $arr_current_tax_brackets[$j]['id']) {
+                                                            $is_found = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+
+                                                if (!$is_found) {
+                                                    $query = "DELETE FROM `fees_classification_tax` WHERE `ID`=$prev_id";
+                                                    mysqli_query($con, $query);
+                                                    if (!has_no_db_error('removing tax bracket for ' . strtolower($application_type))) {
+                                                        $can_proceed = false;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            if($can_proceed) {
+                                                // get update date
+                                                $query = "SELECT DATE_FORMAT(`UpdatedAt`, '%M %e, %Y &middot; %h:%i %p') AS UpdatedAt FROM `fees` WHERE `ID`=$fee_id";
+                                                $result = mysqli_query($con, $query);
+                                                while ($row = mysqli_fetch_assoc($result)) {
+                                                    $response['success']['data'] = $row['UpdatedAt'];
+                                                    break;
+                                                }
+
+                                                // append to system log (UPDATE)
+                                                append_to_system_log(array(
+                                                    'action' => 'UPDATE',
+                                                    'item' => $item,
+                                                    'item_data' => get_fee_data($fee_id)
+                                                ));
+                                            }
                                         }
                                     }
                                 }

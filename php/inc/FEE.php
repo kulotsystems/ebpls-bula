@@ -358,7 +358,7 @@
 
                                 array_push($arr_fees_classification, array(
                                     'fee' => $fee['title'],
-                                    'fee_variable' => $fee_variable['title'],
+                                    'fee_variable' => '',
                                     'amount' => $amount
                                 ));
                                 $total_fee += $amount;
