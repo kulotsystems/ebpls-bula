@@ -338,36 +338,48 @@ function save(e, callback) {
                             }
 
                             else if (tabIdentifier == STR_TAB_FEE_ITEMS) {
-                                var arrClassifications = [];
-                                divItemContent.find(".cbo-fee-status[data-toggle-one-cbo]").each(function () {
-                                    var obj = {};
-                                    var feeVariableID = $(this).val();
-                                    var rootRow = $(this).parent().parent();
-                                    var rootFormAttached = rootRow.parent().parent().parent().parent().parent();
-                                    var rootFormGroupBusinessSizes;
+                                arrClassifications = []; // not needed
 
-                                    obj['business_line_id'] = rootFormAttached.attr('data-id');
-                                    obj['application_type'] = 'NEW';
-                                    if ($(this).hasClass('cbo-fee-status-renewal')) {
-                                        obj['application_type'] = 'RENEWAL';
-                                        rootFormGroupBusinessSizes = rootFormAttached.find('.form-group-business-size-fee-amount-renewal');
-                                    }
-                                    else {
-                                        rootFormGroupBusinessSizes = rootFormAttached.find('.form-group-business-size-fee-amount-new');
-                                    }
-                                    obj['fee_variable_id'] = feeVariableID;
-                                    obj['fee_amount'] = removeCommas(rootRow.find('.form-group-fee-amount').find('.txt-amount').val());
-                                    obj['business_size_fees'] = [];
-                                    if(feeVariableID == '3') {
-                                        rootFormGroupBusinessSizes.each(function (i) {
-                                            var obj2 = {};
-                                            obj2['id'] = $(this).attr('data-id');
-                                            obj2['amount'] = removeCommas($(this).find('.txt-amount').val());
-                                            obj['business_size_fees'].push(obj2);
+                                var divTaxBracketsNew = divItemContent.find('.div-tax-brackets-new');
+                                var divTaxBracketsRenewal = divItemContent.find('.div-tax-brackets-renewal');
+
+                                var newTaxStatus = divTaxBracketsNew.find('.cbo-tax-status').val();
+                                var renewalTaxStatus = divTaxBracketsRenewal.find('.cbo-tax-status').val();
+
+                                var arrNewTaxBrackets = [];
+                                if(newTaxStatus == '3' || newTaxStatus == '9') {
+                                    divTaxBracketsNew.find('.form-group-tax-bracket').each(function(i) {
+                                        arrNewTaxBrackets.push({
+                                            order: i.toString(),
+                                            id: $(this).attr('data-id'),
+                                            asset_min: removeCommas($(this).find('.txt-amount-asset-minimum').val()),
+                                            asset_max: removeCommas($(this).find('.txt-amount-asset-maximum').val()),
+                                            tax_value: removeCommas($(this).find('.txt-amount-tax-value').val()),
+                                            is_by_percentage: ($(this).find('.chk-is-by-percentage').prop('checked')) ? '1' : '0',
+                                            percentage: removeCommas($(this).find('.txt-amount-tax-percentage').val()),
+                                            of_tax_variable: parseInt($(this).find('.cbo-of-tax-variable-id').val()),
+                                            in_excess_of: removeCommas($(this).find('.txt-in-excess-of').val()),
+                                            additional_tax: removeCommas($(this).find('.txt-additional-tax-amount').val())
                                         });
-                                    }
-                                    arrClassifications.push(obj);
-                                });
+                                    });
+                                }
+                                var arrRenewalTaxBrackets = [];
+                                if(renewalTaxStatus == '4' || renewalTaxStatus == '5' || renewalTaxStatus == '6' || renewalTaxStatus == '9') {
+                                    divTaxBracketsRenewal.find('.form-group-tax-bracket').each(function(i) {
+                                        arrRenewalTaxBrackets.push({
+                                            order: i.toString(),
+                                            id: $(this).attr('data-id'),
+                                            asset_min: removeCommas($(this).find('.txt-amount-asset-minimum').val()),
+                                            asset_max: removeCommas($(this).find('.txt-amount-asset-maximum').val()),
+                                            tax_value: removeCommas($(this).find('.txt-amount-tax-value').val()),
+                                            is_by_percentage: ($(this).find('.chk-is-by-percentage').prop('checked')) ? '1' : '0',
+                                            percentage: removeCommas($(this).find('.txt-amount-tax-percentage').val()),
+                                            of_tax_variable: parseInt($(this).find('.cbo-of-tax-variable-id').val()),
+                                            in_excess_of: removeCommas($(this).find('.txt-in-excess-of').val()),
+                                            additional_tax: removeCommas($(this).find('.txt-additional-tax-amount').val())
+                                        });
+                                    });
+                                }
 
                                 objAjaxData = {
                                     save_fee: activeCardMainItem.attr('data-id'),
@@ -375,7 +387,15 @@ function save(e, callback) {
                                     desc: divItemContent.find('.txt-desc').val().trim(),
                                     is_multiple_collection: (divItemContent.find('.chk-multiple-collection').prop('checked')) ? '1' : '0',
                                     is_for_poblacion_only: (divItemContent.find('.chk-for-poblacion-only').prop('checked')) ? '1' : '0',
-                                    classifications: arrClassifications
+                                    classifications: arrClassifications,
+
+                                    business_line_id: divItemContent.find('#cbo-fee-settings').val().trim(),
+                                    new_tax_status: newTaxStatus,
+                                    renewal_tax_status: renewalTaxStatus,
+                                    new_tax_fixed: removeCommas(divTaxBracketsNew.find('.txt-amount-fixed-new').val()),
+                                    renewal_tax_fixed: removeCommas(divTaxBracketsRenewal.find('.txt-amount-fixed-renewal').val()),
+                                    new_tax_brackets: arrNewTaxBrackets,
+                                    renewal_tax_brackets: arrRenewalTaxBrackets
                                 };
                             }
 

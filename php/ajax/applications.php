@@ -148,12 +148,16 @@
                     require INDEX . 'php/inc/REQUIREMENT.php';
 
                     $business_size = get_application_business_size($application['total_employees'], $application['total_asset'], 'for getting verification information');
+
                     $arr = array(
                         'application' => $application,
                         'business_size' => $business_size,
                         'verifiers' => get_application_verifier_user_accounts($application_id, $application['application_type'], 'for getting verification information'),
                         'tax_penalty' => get_application_tax_penalty($application['application_type'], $application['date_updated'], $application['total_business_tax'], 'for getting verification information'),
-                        'fees' => get_application_fees($application['application_type'], $application['business_activities'], $business_size, $application['total_employees'], $application['business_area'], $application['belongs_to_poblacion'], 'for getting verification information'),
+                        'fees' => get_application_fees(
+                            $application['application_type'], $application['business_activities'], $business_size, $application['total_employees'], $application['business_area'], $application['belongs_to_poblacion'], 'for getting verification information',
+
+                        ),
                         'requirements' => get_application_requirements($application_id, $application['application_type'], $application['business_activities'], $application['belongs_to_poblacion'], 'for getting verification information')
                     );
                 }
