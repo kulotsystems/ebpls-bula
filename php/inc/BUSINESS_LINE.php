@@ -33,7 +33,7 @@
                     // get tax brackets
                     $arr_taxes_brackets = array();
                     if($include_tax_brackets) {
-                        $GLOBALS['query']  = "SELECT `ID`, `ApplicationType`, `AssetMinimum`, `AssetMaximum`, `Amount`, `IsByPercentage`, `Percentage`, `OfTaxVariableID`, `InExcessOf`, `AdditionalAmount` ";
+                        $GLOBALS['query']  = "SELECT `ID`, `ApplicationType`, `AssetMinimum`, `AssetMaximum`, `Amount`, `IsByPercentage`, `Percentage`, `Percentage2`, `OfTaxVariableID`, `InExcessOf`, `AdditionalAmount` ";
                         $GLOBALS['query'] .= "FROM `business_lines_tax` ";
                         $GLOBALS['query'] .= "WHERE `BusinessLineID`=$business_line_id ";
                         $GLOBALS['query'] .= "ORDER BY `ApplicationType`, `AssetMinimum`";
@@ -48,6 +48,7 @@
                                     'tax_amount' => floatval($rowz2['Amount']),
                                     'is_by_percentage' => intval($rowz2['IsByPercentage']),
                                     'percentage' => floatval($rowz2['Percentage']),
+                                    'percentage2' => floatval($rowz2['Percentage2']),
                                     'of_tax_variable_id' => intval($rowz2['OfTaxVariableID']),
                                     'in_excess_of' => floatval($rowz2['InExcessOf']),
                                     'additional_amount' => floatval($rowz2['AdditionalAmount'])

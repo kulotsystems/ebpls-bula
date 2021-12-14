@@ -759,6 +759,7 @@ $(function() {
             taxAmount: 0,
             isByPercentage: 0,
             percentage: 0,
+            percentage2: 100,
             perTaxVariableID: cboTaxStatusVal,
             ofTaxVariableID: defaulTaxVarID,
             inExcessOf: 0,

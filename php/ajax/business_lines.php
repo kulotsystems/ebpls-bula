@@ -228,13 +228,14 @@
                                     $tax_value = floatval($tax_bracket['tax_value']);
                                     $is_by_percentage = intval($tax_bracket['is_by_percentage']);
                                     $percentage = floatval($tax_bracket['percentage']);
+                                    $percentage2 = floatval($tax_bracket['percentage2']);
                                     $of_tax_variable_id = intval($tax_bracket['of_tax_variable']);
                                     $in_excess_of = floatval($tax_bracket['in_excess_of']);
                                     $additional_tax = floatval($tax_bracket['additional_tax']);
 
                                     if($id == -1) { // insert
-                                        $query  = "INSERT INTO `business_lines_tax`(`ApplicationType`, `BusinessLineID`, `AssetMinimum`, `AssetMaximum`, `Amount`, `IsByPercentage`, `Percentage`, `OfTaxVariableID`, `InExcessOf`, `AdditionalAmount`) ";
-                                        $query .= "VALUES('NEW', $business_line_id, $asset_min, $asset_max, $tax_value, $is_by_percentage, $percentage, $of_tax_variable_id, $in_excess_of, $additional_tax)";
+                                        $query  = "INSERT INTO `business_lines_tax`(`ApplicationType`, `BusinessLineID`, `AssetMinimum`, `AssetMaximum`, `Amount`, `IsByPercentage`, `Percentage`, `Percentage2`, `OfTaxVariableID`, `InExcessOf`, `AdditionalAmount`) ";
+                                        $query .= "VALUES('NEW', $business_line_id, $asset_min, $asset_max, $tax_value, $is_by_percentage, $percentage, $percentage2, $of_tax_variable_id, $in_excess_of, $additional_tax)";
                                         mysqli_query($con, $query);
                                         if(!has_no_db_error('adding tax bracket for new business')) {
                                             $can_proceed = false;
@@ -252,10 +253,13 @@
                                         $query .= "`Amount`=$tax_value, ";
                                         $query .= "`IsByPercentage`=$is_by_percentage, ";
                                         $query .= "`Percentage`=$percentage, ";
+                                        $query .= "`Percentage2`=$percentage2, ";
                                         $query .= "`OfTaxVariableID`=$of_tax_variable_id, ";
                                         $query .= "`InExcessOf`=$in_excess_of, ";
                                         $query .= "`AdditionalAmount`=$additional_tax ";
                                         $query .= "WHERE `ID`=$id";
+
+
                                         mysqli_query($con, $query);
                                         if(!has_no_db_error('updating tax bracket for new business')) {
                                             $can_proceed = false;
@@ -285,13 +289,14 @@
                                         $tax_value = floatval($tax_bracket['tax_value']);
                                         $is_by_percentage = intval($tax_bracket['is_by_percentage']);
                                         $percentage = floatval($tax_bracket['percentage']);
+                                        $percentage2 = floatval($tax_bracket['percentage2']);
                                         $of_tax_variable_id = intval($tax_bracket['of_tax_variable']);
                                         $in_excess_of = floatval($tax_bracket['in_excess_of']);
                                         $additional_tax = floatval($tax_bracket['additional_tax']);
 
                                         if($id == -1) { // insert
-                                            $query  = "INSERT INTO `business_lines_tax`(`ApplicationType`, `BusinessLineID`, `AssetMinimum`, `AssetMaximum`, `Amount`, `IsByPercentage`, `Percentage`, `OfTaxVariableID`, `InExcessOf`, `AdditionalAmount`) ";
-                                            $query .= "VALUES('RENEWAL', $business_line_id, $asset_min, $asset_max, $tax_value, $is_by_percentage, $percentage, $of_tax_variable_id, $in_excess_of, $additional_tax)";
+                                            $query  = "INSERT INTO `business_lines_tax`(`ApplicationType`, `BusinessLineID`, `AssetMinimum`, `AssetMaximum`, `Amount`, `IsByPercentage`, `Percentage`, `Percentage2`, `OfTaxVariableID`, `InExcessOf`, `AdditionalAmount`) ";
+                                            $query .= "VALUES('RENEWAL', $business_line_id, $asset_min, $asset_max, $tax_value, $is_by_percentage, $percentage, $percentage2, $of_tax_variable_id, $in_excess_of, $additional_tax)";
                                             mysqli_query($con, $query);
                                             if(!has_no_db_error('adding tax bracket for renewal')) {
                                                 $can_proceed = false;
@@ -309,6 +314,7 @@
                                             $query .= "`Amount`=$tax_value, ";
                                             $query .= "`IsByPercentage`=$is_by_percentage, ";
                                             $query .= "`Percentage`=$percentage, ";
+                                            $query .= "`Percentage2`=$percentage2, ";
                                             $query .= "`OfTaxVariableID`=$of_tax_variable_id, ";
                                             $query .= "`InExcessOf`=$in_excess_of, ";
                                             $query .= "`AdditionalAmount`=$additional_tax ";
@@ -453,7 +459,7 @@
 
                     // get tax brackets
                     $arr_taxes_brackets = array();
-                    $GLOBALS['query']  = "SELECT `ID`, `ApplicationType`, `AssetMinimum`, `AssetMaximum`, `Amount`, `IsByPercentage`, `Percentage`, `OfTaxVariableID`, `InExcessOf`, `AdditionalAmount` ";
+                    $GLOBALS['query']  = "SELECT `ID`, `ApplicationType`, `AssetMinimum`, `AssetMaximum`, `Amount`, `IsByPercentage`, `Percentage`, `Percentage2`, `OfTaxVariableID`, `InExcessOf`, `AdditionalAmount` ";
                     $GLOBALS['query'] .= "FROM `fees_classification_tax` ";
                     $GLOBALS['query'] .= "WHERE `FeesClassificationID`=$fees_classif_id ";
                     $GLOBALS['query'] .= "ORDER BY `ApplicationType`, `AssetMinimum`";
@@ -468,6 +474,7 @@
                                 'tax_amount' => floatval($rowz3['Amount']),
                                 'is_by_percentage' => intval($rowz3['IsByPercentage']),
                                 'percentage' => floatval($rowz3['Percentage']),
+                                'percentage2' => floatval($rowz3['Percentage2']),
                                 'of_tax_variable_id' => intval($rowz3['OfTaxVariableID']),
                                 'in_excess_of' => floatval($rowz3['InExcessOf']),
                                 'additional_amount' => floatval($rowz3['AdditionalAmount'])

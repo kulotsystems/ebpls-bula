@@ -142,7 +142,7 @@
                                         $percent_source -= $arr_tax_brackets[$i]['in_excess_of'];
                                     }
 
-                                    $arr_tax['tax_amount'] = ($percent_source * ($arr_tax_brackets[$i]['percentage'] / 100)) + $arr_tax_brackets[$i]['additional_amount'];
+                                    $arr_tax['tax_amount'] = ($percent_source * ($arr_tax_brackets[$i]['percentage'] / 100) * ($arr_tax_brackets[$i]['percentage2'] / 100)) + $arr_tax_brackets[$i]['additional_amount'];
                                 }
                                 else {
                                     $arr_tax['tax_amount'] = $arr_tax_brackets[$i]['tax_amount'];

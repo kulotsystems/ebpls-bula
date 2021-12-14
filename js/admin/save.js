@@ -257,6 +257,7 @@ function save(e, callback) {
                                             tax_value: removeCommas($(this).find('.txt-amount-tax-value').val()),
                                             is_by_percentage: ($(this).find('.chk-is-by-percentage').prop('checked')) ? '1' : '0',
                                             percentage: removeCommas($(this).find('.txt-amount-tax-percentage').val()),
+                                            percentage2: removeCommas($(this).find('.txt-amount-tax-percentage-2').val()),
                                             of_tax_variable: parseInt($(this).find('.cbo-of-tax-variable-id').val()),
                                             in_excess_of: removeCommas($(this).find('.txt-in-excess-of').val()),
                                             additional_tax: removeCommas($(this).find('.txt-additional-tax-amount').val())
@@ -274,6 +275,7 @@ function save(e, callback) {
                                             tax_value: removeCommas($(this).find('.txt-amount-tax-value').val()),
                                             is_by_percentage: ($(this).find('.chk-is-by-percentage').prop('checked')) ? '1' : '0',
                                             percentage: removeCommas($(this).find('.txt-amount-tax-percentage').val()),
+                                            percentage2: removeCommas($(this).find('.txt-amount-tax-percentage-2').val()),
                                             of_tax_variable: parseInt($(this).find('.cbo-of-tax-variable-id').val()),
                                             in_excess_of: removeCommas($(this).find('.txt-in-excess-of').val()),
                                             additional_tax: removeCommas($(this).find('.txt-additional-tax-amount').val())
@@ -357,6 +359,7 @@ function save(e, callback) {
                                             tax_value: removeCommas($(this).find('.txt-amount-tax-value').val()),
                                             is_by_percentage: ($(this).find('.chk-is-by-percentage').prop('checked')) ? '1' : '0',
                                             percentage: removeCommas($(this).find('.txt-amount-tax-percentage').val()),
+                                            percentage2: removeCommas($(this).find('.txt-amount-tax-percentage-2').val()),
                                             of_tax_variable: parseInt($(this).find('.cbo-of-tax-variable-id').val()),
                                             in_excess_of: removeCommas($(this).find('.txt-in-excess-of').val()),
                                             additional_tax: removeCommas($(this).find('.txt-additional-tax-amount').val())
@@ -374,6 +377,7 @@ function save(e, callback) {
                                             tax_value: removeCommas($(this).find('.txt-amount-tax-value').val()),
                                             is_by_percentage: ($(this).find('.chk-is-by-percentage').prop('checked')) ? '1' : '0',
                                             percentage: removeCommas($(this).find('.txt-amount-tax-percentage').val()),
+                                            percentage2: removeCommas($(this).find('.txt-amount-tax-percentage-2').val()),
                                             of_tax_variable: parseInt($(this).find('.cbo-of-tax-variable-id').val()),
                                             in_excess_of: removeCommas($(this).find('.txt-in-excess-of').val()),
                                             additional_tax: removeCommas($(this).find('.txt-additional-tax-amount').val())

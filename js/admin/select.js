@@ -760,6 +760,7 @@ function renderItemData(objData, tabIdentifier, isForLogs, senderTabIdentifier) 
                                 pushNode(asset_bracket, 'taxAmount', taxBracket.tax_amount);
                                 pushNode(asset_bracket, 'isByPercentage', taxBracket.is_by_percentage);
                                 pushNode(asset_bracket, 'percentage', taxBracket.percentage);
+                                pushNode(asset_bracket, 'percentage2', taxBracket.percentage2);
                                 pushNode(asset_bracket, 'perTaxVariableID', objData.new_tax_var_id);
                                 pushNode(asset_bracket, 'ofTaxVariableID', taxBracket.of_tax_variable_id);
                                 pushNode(asset_bracket, 'inExcessOf', taxBracket.in_excess_of);
@@ -861,6 +862,7 @@ function renderItemData(objData, tabIdentifier, isForLogs, senderTabIdentifier) 
                                 pushNode(asset_bracket, 'taxAmount', taxBracket.tax_amount);
                                 pushNode(asset_bracket, 'isByPercentage', taxBracket.is_by_percentage);
                                 pushNode(asset_bracket, 'percentage', taxBracket.percentage);
+                                pushNode(asset_bracket, 'percentage2', taxBracket.percentage2);
                                 pushNode(asset_bracket, 'perTaxVariableID', objData.renewal_tax_var_id);
                                 pushNode(asset_bracket, 'ofTaxVariableID', taxBracket.of_tax_variable_id);
                                 pushNode(asset_bracket, 'inExcessOf', taxBracket.in_excess_of);
@@ -3070,6 +3072,7 @@ function generateBusinessFeeSettings(objData) {
                             pushNode(asset_bracket, 'taxAmount', taxBracket.tax_amount);
                             pushNode(asset_bracket, 'isByPercentage', taxBracket.is_by_percentage);
                             pushNode(asset_bracket, 'percentage', taxBracket.percentage);
+                            pushNode(asset_bracket, 'percentage2', taxBracket.percentage2);
                             pushNode(asset_bracket, 'perTaxVariableID', objData.new_tax_var_id);
                             pushNode(asset_bracket, 'ofTaxVariableID', taxBracket.of_tax_variable_id);
                             pushNode(asset_bracket, 'inExcessOf', taxBracket.in_excess_of);
@@ -3173,6 +3176,7 @@ function generateBusinessFeeSettings(objData) {
                             pushNode(asset_bracket, 'taxAmount', taxBracket.tax_amount);
                             pushNode(asset_bracket, 'isByPercentage', taxBracket.is_by_percentage);
                             pushNode(asset_bracket, 'percentage', taxBracket.percentage);
+                            pushNode(asset_bracket, 'percentage2', taxBracket.percentage2);
                             pushNode(asset_bracket, 'perTaxVariableID', objData.renewal_tax_var_id);
                             pushNode(asset_bracket, 'ofTaxVariableID', taxBracket.of_tax_variable_id);
                             pushNode(asset_bracket, 'inExcessOf', taxBracket.in_excess_of);
@@ -3336,6 +3340,7 @@ function generateBusinessActivity(application_type, business_activity, isForLogs
  */
 var assetBracketCtr = 0;
 function generateAssetBracket(asset_bracket, isForLogs) {
+    console.log(asset_bracket);
     assetBracketCtr += 1;
     var attrAddonCurrencyClass = '';
     var strAssetLabel = 'ASSET';
@@ -3428,12 +3433,36 @@ function generateAssetBracket(asset_bracket, isForLogs) {
                             h += "</div>";
                         }
 
-                        if(asset_bracket.ofTaxVariableID != null && asset_bracket.percentage != null && asset_bracket.objTaxVariables != null) {
+                        console.log(asset_bracket);
+                        if(asset_bracket.ofTaxVariableID != null && asset_bracket.percentage != null && asset_bracket.percentage2 != null && asset_bracket.objTaxVariables != null) {
+
+                            // percentage 2
+                            classHidden = (asset_bracket.isByPercentage == '1') ? '' : ' hidden';
+                            h += "<div class='col-md-12 col-sm-12 no-padding-left-colsm6 div-by-percentage div-by-percentage-" + assetBracketCtr.toString() + classHidden + "'>";
+                                h += "<div class='form-group form-group-default input-group input-group-percentage'>";
+                                    h += "<div class='form-input-group'>";
+                                        h += "<label class=''><span class='label-label pl-2 pr-3'>TAX PERCENTAGE 2</span></label>";
+                                        h += "<input type='text' class='form-control txt-amount txt-amount-tax-percentage-2' value='" + applyCommas(removeCommas(asset_bracket.percentage2)) + "' data-update-el-on-keyup='.percentage-label-" + assetBracketCtr.toString() + "' style='font-size: 14px;'>";
+                                    h += "</div>";
+                                    h += "<div class='input-group-addon bg-transparent h-c-50'>";
+                                        h += "<table class='h-100 w-100'>";
+                                            h += "<tbody>";
+                                                h += "<tr>";
+                                                    h += "<td valign='bottom'><span class='fa fa-percent'></span></td>";
+                                                h += "</tr>";
+                                            h += "</tbody>";
+                                        h += "</table>";
+                                    h += "</div>";
+                                h += "</div>";
+                            h += "</div>";
+
+
                             // percent of
                             classHidden = (asset_bracket.isByPercentage == '1') ? '' : ' hidden';
                             h += "<div class='col-md-12 div-percent-of div-percent-of-" + assetBracketCtr.toString() + "" + classHidden + "'>";
                                 h += "<div class='form-group form-group-default'>";
-                                    h += "<label class='no-margin no-padding'><span class='label-label'><b class='percent-label percentage-label-" + assetBracketCtr.toString() + "'>" + applyCommas(removeCommas(asset_bracket.percentage)) + "</b><b>%</b> of:</span></label>";
+                                    // h += "<label class='no-margin no-padding'><span class='label-label'><b class='percent-label percentage-label-" + assetBracketCtr.toString() + "'>" + applyCommas(removeCommas(asset_bracket.percentage)) + "</b><b>%</b> of " + applyCommas(removeCommas(asset_bracket.percentage2)) + " of:</span></label>";
+                                    h += "<label class='no-margin no-padding'>OF:</label>";
                                     h += "<select class='cbo-of-tax-variable-id'>";
                                         for(var i=0; i<asset_bracket.objTaxVariables.length; i++) {
                                             var attrSelected = (asset_bracket.objTaxVariables[i].id == asset_bracket.ofTaxVariableID) ? ' selected' : '';

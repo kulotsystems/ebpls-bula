@@ -220,7 +220,7 @@
                                                     $percent_source -= $arr_tax_brackets[$i]['in_excess_of'];
                                                 }
 
-                                                $arr_tax['tax_amount'] = ($percent_source * ($arr_tax_brackets[$i]['percentage'] / 100)) + $arr_tax_brackets[$i]['additional_amount'];
+                                                $arr_tax['tax_amount'] = ($percent_source * ($arr_tax_brackets[$i]['percentage'] / 100) * ($arr_tax_brackets[$i]['percentage2'] / 100)) + $arr_tax_brackets[$i]['additional_amount'];
                                             }
                                             else {
                                                 $arr_tax['tax_amount'] = $arr_tax_brackets[$i]['tax_amount'];
@@ -235,7 +235,7 @@
 
 
                         $arr_taxes_brackets = [];
-                        $GLOBALS['query']  = "SELECT `ID`, `ApplicationType`, `AssetMinimum`, `AssetMaximum`, `Amount`, `IsByPercentage`, `Percentage`, `OfTaxVariableID`, `InExcessOf`, `AdditionalAmount` ";
+                        $GLOBALS['query']  = "SELECT `ID`, `ApplicationType`, `AssetMinimum`, `AssetMaximum`, `Amount`, `IsByPercentage`, `Percentage`, `Percentage2`, `OfTaxVariableID`, `InExcessOf`, `AdditionalAmount` ";
                         $GLOBALS['query'] .= "FROM `fees_classification_tax` ";
                         $GLOBALS['query'] .= "WHERE `FeesClassificationID`=$fee_classification_id ";
                         $GLOBALS['query'] .= "ORDER BY `ApplicationType`, `AssetMinimum`";
@@ -250,6 +250,7 @@
                                     'tax_amount' => floatval($rowz2['Amount']),
                                     'is_by_percentage' => intval($rowz2['IsByPercentage']),
                                     'percentage' => floatval($rowz2['Percentage']),
+                                    'percentage2' => floatval($rowz2['Percentage2']),
                                     'of_tax_variable_id' => intval($rowz2['OfTaxVariableID']),
                                     'in_excess_of' => floatval($rowz2['InExcessOf']),
                                     'additional_amount' => floatval($rowz2['AdditionalAmount'])
