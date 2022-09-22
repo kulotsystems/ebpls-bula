@@ -74,7 +74,7 @@
      *
      * USAGE SAMPLE: array_walk($YOUR_ARRAY_VARIABLE, 'utf8encode');
      */
-    function utf8encode(&$value, &$key) {
+    function utf8encode(&$value, $key) {
         if(is_array($value)) {
             array_walk($value, 'utf8encode');
         }
