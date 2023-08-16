@@ -10,9 +10,9 @@ Electronic Business Permit and Licensing System (Bula, Camarines Sur).
 
    <small>The final path should be: `path_to/xampp/htdocs/ebpls-bula`.</small>
 
-2. Move [inc/egov2](inc/egov2) folder to `/xampp/htdocs` folder.
+2. Copy [inc/egov2](inc/egov2) folder to `/xampp/htdocs` folder.
 
-   <small>Its final path should be: `/xampp/htdocs/egov2`.</small>
+   <small>Its final path should be: `path_to/xampp/htdocs/egov2`.</small>
 
 3. Open [phpMyAdmin](http://localhost/phpmyadmin) in your browser.
 
